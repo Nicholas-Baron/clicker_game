@@ -38,6 +38,8 @@ module.exports = {
         "no-implicit-coercion": "warn",
         "no-useless-return": "error",
         "no-var": "error",
+        "object-curly-spacing": ["warn", "always"],
+        "object-property-newline": ["warn", { "allowAllPropertiesOnSameLine" : true } ],
         "prefer-const": "warn",
         "space-infix-ops": "warn",
     }
