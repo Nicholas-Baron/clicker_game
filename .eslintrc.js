@@ -35,5 +35,6 @@ module.exports = {
         "space-infix-ops": "warn",
         "no-extra-parens": "warn",
         "curly": ["warn", "multi"],
+        "dot-notation": "error",
     }
 }
