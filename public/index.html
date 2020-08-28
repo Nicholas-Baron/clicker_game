@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="interface.css" />
+  </head>
+  <body>
+    <script type="text/javascript" src="main.js"></script>
+    <div class="row">
+      <div class="column">
+	Gold: <span class="gold"></span>
+	<span style="display:none" class="show_pickaxe">Pickaxe Level: <span class="pickaxe"></span></span>
+	<span style="display:none" class="show_miner">Miners: <span class="miner"></span></span>
+	<span style="display:none" class="show_miner_pickaxe">Miner Pickaxe Level: <span class="miner_pickaxe"></span></span>
+      </div>
+      <div class="column">
+	<button onClick="mineGold(1)">Mine Gold</button>
+	<button style="display:none" class="show_pickaxe" onClick="upgradePickaxe(1)">Upgrade Pickaxe: $<span class="pickaxe_cost"></span></button>
+	<button style="display:none" class="show_miner" onClick="hireMiner(1)">Hire Miners: $<span class="miner_cost"></span></button>
+	<button style="display:none" class="show_miner" onClick="upgradeMinerPickaxe(1)">Upgrade Miners' Pickaxes: $<span class="miner_pickaxe_cost"></span></button>
+      </div>
+    </div>
+  </body>
+</html>

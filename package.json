@@ -1,0 +1,20 @@
+{
+  "name": "clicker_game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "lint": "npx eslint public/",
+    "fix": "npx eslint --fix public/",
+    "build": "npx tsc && cp public/*.{css,html} output/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.10.1",
+    "@typescript-eslint/parser": "^3.10.1",
+    "eslint": "^7.7.0",
+    "typescript": "^4.0.2"
+  }
+}

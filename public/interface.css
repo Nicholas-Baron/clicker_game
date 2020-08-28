@@ -1,0 +1,23 @@
+button {
+    background-color: #FFFFFF; 
+    border: none;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;    
+}
+
+button:hover {
+    background-color: #e7e7e7; 
+}
+
+button:active {
+    background-color: #ececec; 
+}
+
+.column {
+  float: left;
+  width: 50%;
+}
