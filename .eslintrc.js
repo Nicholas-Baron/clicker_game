@@ -32,6 +32,13 @@ module.exports = {
             "error",
             "always"
         ],
-        "space-infix-ops": "warn"  
+        "curly": ["warn", "multi"],
+        "dot-notation": "error",
+        "no-extra-parens": "warn",
+        "no-implicit-coercion": "warn",
+        "no-useless-return": "error",
+        "no-var": "error",
+        "prefer-const": "warn",
+        "space-infix-ops": "warn",
     }
 }
