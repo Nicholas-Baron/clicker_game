@@ -32,6 +32,7 @@ module.exports = {
             "error",
             "always"
         ],
-        "space-infix-ops": "warn"  
+        "space-infix-ops": "warn",
+        "no-extra-parens": "warn",
     }
 }
