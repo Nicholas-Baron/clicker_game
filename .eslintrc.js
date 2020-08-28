@@ -36,5 +36,7 @@ module.exports = {
         "no-extra-parens": "warn",
         "curly": ["warn", "multi"],
         "dot-notation": "error",
+        "no-implicit-coercion": "warn",
+        "no-useless-return": "error",
     }
 }
