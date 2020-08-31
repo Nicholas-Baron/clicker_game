@@ -67,6 +67,12 @@ class Army {
     }
 }
 
+// Returns a random integer inclusive on both ends
+function getRandInt(min:number, max:number):number {
+    return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
+
 class Kingdom {
     name: string;
     // TODO: Better define health
@@ -109,6 +115,22 @@ class Kingdom {
         // TODO: Decrease price after sale
     }
 }
+
+const minStartingRye = 50;
+const maxStartingRye = 100;
+
+const minStartingPop = 1;
+const maxStartingPop = 10;
+
+const kingdoms = [
+    // TODO: Allow player to add own name
+    new Kingdom("player", getRandInt(minStartingPop, maxStartingPop)), // player
+    //TODO: Add other kingdoms
+];
+
+// Init player data
+const player = kingdoms[0];
+player.farms.set(Crop.Rye, new Farm(getRandInt(minStartingRye, maxStartingRye)));
 
 function updateText() {
 
