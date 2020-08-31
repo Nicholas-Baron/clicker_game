@@ -24,6 +24,26 @@ cropMarket.set(Crop.Rye, 1);
 // Food eaten by one person
 const consumptionRate = 0.5;
 
+// A farm
+class Farm {
+    totalFarmers = 0;
+    stockpile: number;
+
+    constructor(initalSeed: number){
+        this.stockpile = initalSeed;
+        console.assert(this.stockpile > 0);
+    }
+
+    // TODO: What if stockpile hits 0 and all food is eaten by the farmers
+    harvest(crop: Crop){
+        const amountGrown = Math.min(this.totalFarmers, this.stockpile);
+        // Non-null assertion as a Map may not have every entry ready
+        this.stockpile += amountGrown * cropGrowthRate.get(crop)!;
+        this.stockpile -= this.totalFarmers * consumptionRate;
+        console.assert(this.stockpile > 0);
+    }
+}
+
 function updateText() {
 
 }
