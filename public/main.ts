@@ -144,6 +144,16 @@ function updateText() {
 }
 
 
+function loadGUI() {
+    cropMarket.forEach((value, key, map) => {
+        let button = document.createElement("button");
+        button.innerHTML = Crop[key] + " " + key.toString() + "G";
+        let store = document.getElementById("store-tab");
+        store?.appendChild(button);
+    });
+}
+
+
 window.setInterval(() => {
     timer += tickRate;
 

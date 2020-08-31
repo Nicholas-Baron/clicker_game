@@ -3,12 +3,33 @@
   <head>
     <link rel="stylesheet" type="text/css" href="interface.css" />
   </head>
-  <body>
+  <body onload="loadGUI()">
     <script type="text/javascript" src="main.js"></script>
-    <div class="row">
-      <div class="column">
-      </div>
-      <div class="column">
+    <div class="container">
+      <div class="row">
+        <div class="column">
+          <div id="actions-tab">
+            <p class="info-label">Gold: <span id="gold"></span></p>
+            <button id="harvest">Harvest Crops</button>
+            <p class="info-label">People: <span id="people"></span></p>
+            <div id="soldier">
+              <p class="info-label">soldier: <span></span></p>
+              <button>assign person</button>
+              <button>remove person</button>
+            </div>
+            <div id="farmer">
+              <p class="info-label">farmer: <span></span></p>
+              <button>assign person</button>
+              <button>remove person</button>
+            </div>
+          </div>
+        </div>
+        <div class="column">
+          <div id="store-tab">
+            <p>Store</p>
+
+          </div>
+        </div>
       </div>
     </div>
   </body>
