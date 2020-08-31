@@ -16,10 +16,13 @@ const cropGrowthRate: Map<Crop, number> = new Map();
 crops.forEach(crop => cropGrowthRate.set(crop, baseCropGrowthRate));
 
 // Price per 1 unit of crop
-const cropMarket: Map<Crop, number> = new Map();
-cropMarket.set(Crop.Wheat, 3);
-cropMarket.set(Crop.Barley, 2);
-cropMarket.set(Crop.Rye, 1);
+const cropMarket = new Map(
+    [
+        [Crop.Wheat, 3],
+        [Crop.Barley, 2],
+        [Crop.Rye, 1],
+    ]
+);
 
 // Food eaten by one person
 const consumptionRate = 0.5;
