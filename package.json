@@ -1,7 +1,7 @@
 {
   "name": "clicker_game",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple clicker game",
   "main": "main.js",
   "scripts": {
     "lint": "npx eslint public/",
