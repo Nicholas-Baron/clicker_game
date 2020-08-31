@@ -16,6 +16,7 @@ const cropGrowthRate: Map<Crop, number> = new Map();
 crops.forEach(crop => cropGrowthRate.set(crop, baseCropGrowthRate));
 
 // Price per 1 unit of crop
+// TODO: Randomly move the price up and down
 const cropMarket = new Map(
     [
         [Crop.Wheat, 3],
@@ -44,6 +45,68 @@ class Farm {
         this.stockpile += amountGrown * cropGrowthRate.get(crop)!;
         this.stockpile -= this.totalFarmers * consumptionRate;
         console.assert(this.stockpile > 0);
+    }
+}
+
+// Loot is an interface b/c kingdom (currently) can become a Loot object
+interface Loot {
+    gold: number;
+    farms: Map<Crop, Farm>;
+}
+
+const baseDPSPerSoldier = 1;
+
+class Army {
+    totalSoldiers = 0;
+    dpsPerSoldier = baseDPSPerSoldier;
+
+    attack(kingdom: Kingdom): Loot {
+        //TODO: How to attack a kingdom
+        console.assert(false, "Attacking a Kingdom is not implemented");
+        return kingdom;
+    }
+}
+
+class Kingdom {
+    name: string;
+    // TODO: Better define health
+    health = 100;
+    gold = 0;
+    idlePopulation: number;
+    army = new Army();
+    farms: Map<Crop, Farm> = new Map();
+
+    constructor(name: string, initialPopulation: number){
+        this.idlePopulation = initialPopulation;
+        this.name = name;
+    }
+
+    orderHarvest() {
+        this.farms.forEach(
+            (farm, crop) => farm.harvest(crop)
+        );
+    }
+
+    buyCrop(crop: Crop, amt: number) {
+        const cost = amt * cropMarket.get(crop)!;
+        if(cost > this.gold) return;
+
+        const farm = this.farms.get(crop)!;
+        this.gold -= cost;
+        farm.stockpile += amt;
+
+        // TODO: Increase price after purchase
+    }
+
+    sellCrop(crop: Crop, amt: number){
+        const farm = this.farms.get(crop)!;
+        if(farm.stockpile < amt) return;
+
+        const profit = amt * cropMarket.get(crop)!;
+        farm.stockpile -= amt;
+        this.gold += profit;
+
+        // TODO: Decrease price after sale
     }
 }
 
