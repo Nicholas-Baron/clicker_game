@@ -132,6 +132,11 @@ const kingdoms = [
 const player = kingdoms[0];
 player.farms.set(Crop.Rye, new Farm(getRandInt(minStartingRye, maxStartingRye)));
 
+// indicies for select fields
+let selectedFarm = "Rye";
+// let selectedCrop = "Rye";
+// let sellAmount = "";
+
 function promptPlayer(message: string): string {
     let result = null;
     while(result == null)
@@ -139,21 +144,164 @@ function promptPlayer(message: string): string {
     return result;
 }
 
-function updateText() {
+
+
+function handleBuy(ev: MouseEvent) {
+    let name = (ev.target as HTMLElement).id;
+    let key = name.substring(0, name.indexOf("-"));
+    let crop = Crop[key as keyof typeof Crop];
+
+    if(player.gold >= cropMarket.get(crop)!) {
+
+        if(!player.farms.has(crop)) {
+            player.farms.set(crop, new Farm(1));
+            let stats = document.getElementById("gold-grain-stats");
+            let grainStat = document.createElement("p");
+            grainStat.innerHTML = player.farms.get(crop)!.stockpile.toString() + " " + Crop[crop];
+            grainStat.id = Crop[crop] + "-stats";
+
+            let farms = document.getElementById("farms");
+            let farmOption = document.createElement("option");
+            farmOption.id = Crop[crop] + "-farm-option";
+            farmOption.innerHTML = Crop[crop];
+            farms!.appendChild(farmOption);
+
+            let sellCrops = document.getElementById("crops-sale");
+            let cropOption = document.createElement("option");
+            cropOption.id = Crop[crop] + "-crop-option";
+            cropOption.innerHTML = Crop[crop];
+            sellCrops!.appendChild(cropOption);
+
+            stats?.appendChild(grainStat);
+        }
+        else {
+            player.farms.get(crop)!.stockpile += 1;
+        }
+        player.gold-= cropMarket.get(crop)!;
+    }
+
 
 }
 
-
+// load gui
 function loadGUI() {
     cropMarket.forEach((value, key, map) => {
         let button = document.createElement("button");
-        button.innerHTML = Crop[key] + " " + key.toString() + "G";
+        button.innerHTML = Crop[key] + " " + value.toString() + "G";
+        button.onclick = handleBuy;
+        button.id = Crop[key] + "-store";
         let store = document.getElementById("store-tab");
         store?.appendChild(button);
     });
+
+    document.getElementById("gold")!.innerHTML = player.gold.toString();
+
+    player.farms.forEach((value: Farm, key: Crop, map: Map<Crop, Farm>) => {
+        let parent = document.getElementById("gold-grain-stats");
+        let grain = document.createElement("p");
+        grain.id = Crop[key] + "-stats";
+        grain.innerHTML = value.stockpile + " " + Crop[key];
+        parent!.appendChild(grain);
+
+        let farms = document.getElementById("farms");
+        let farmOption = document.createElement("option");
+        farmOption.id = Crop[key] + "-farm-option";
+        farmOption.innerHTML = Crop[key];
+        farms!.appendChild(farmOption);
+
+        let sellCrops = document.getElementById("crops-sale");
+        let cropOption = document.createElement("option");
+        cropOption.id = Crop[key] + "-crop-option";
+        cropOption.innerHTML = Crop[key];
+        sellCrops!.appendChild(cropOption);
+    })
+
+
+
+
+    document.getElementById("people")!.innerHTML = player.idlePopulation.toString();
+    document.getElementById("soldiers")!.innerHTML = player.army.totalSoldiers.toString();
+    document.getElementById("farmers")!.innerHTML = getTotalFarmers().toString();
 }
+function getTotalFarmers() {
+    let totalFarmers = 0;
+    player.farms.forEach((value: Farm, key: Crop, map: Map<Crop, Farm>) => {
+                totalFarmers += value.totalFarmers;
+            })
+    return totalFarmers;
+}
+function updateStats() {
+    document.getElementById("gold")!.innerHTML = player.gold.toString();
+    document.getElementById("soldiers")!.innerHTML = player.army.totalSoldiers.toString();
+    document.getElementById("farmers")!.innerHTML = getTotalFarmers().toString();
+    document.getElementById("people")!.innerHTML = player.idlePopulation.toString();
+    player.farms.forEach((value: Farm, key: Crop, map: Map<Crop, Farm>) => {
+        document.getElementById(Crop[key] + "-stats")!.innerHTML = value.stockpile.toString() + " " + Crop[key];
+        document.getElementById(Crop[key] + "-farm-option")!.innerHTML = Crop[key];
+        document.getElementById(Crop[key] + "-crop-option")!.innerHTML = Crop[key];
+    })
 
+}
+function handleHarvest() {
 
+}
+function handleAssignFarmer() {
+    if(player.idlePopulation > 0){
+        player.idlePopulation--;
+        player.farms.get(Crop[selectedFarm as keyof typeof Crop])!.totalFarmers++;
+    }
+}
+function handleRemoveFarmer() {
+    if(player.farms.get(Crop[selectedFarm as keyof typeof Crop])!.totalFarmers > 0) {
+        player.farms.get(Crop[selectedFarm as keyof typeof Crop])!.totalFarmers--;
+        player.idlePopulation++;
+    }
+}
+function handleAssignSoldier() {
+    if(player.idlePopulation > 0) {
+        player.idlePopulation--;
+        player.army.totalSoldiers++;
+    }
+}
+function handleRemoveSoldier() {
+    if(player.army.totalSoldiers > 0) {
+        player.idlePopulation++;
+        player.army.totalSoldiers--;
+    }
+}
+function handleFarmChoice(element: HTMLInputElement) {
+    selectedFarm = element.value;
+}
+// function handleCropChoice(element: HTMLInputElement) {
+//     selectedCrop = element.value;
+// }
+function handleSellChoice(element: HTMLInputElement) {
+
+}
+// function handleSellAmount(element: HTMLInputElement) {
+//     sellAmount = element.value;
+// }
+function sellCrop() {
+    try {
+        let sellAmount = document.getElementById("amount") as HTMLInputElement;
+        let amount = sellAmount.value;
+
+        let cropElement = document.getElementById("crops-sale") as HTMLInputElement;
+        let selectedCrop = cropElement.value;
+        console.log(selectedCrop);
+
+        if(isNaN(Number(amount))){
+            return;
+        }
+        let crop = Crop[selectedCrop as keyof typeof Crop];
+        if(player.farms.get(crop)!.stockpile > 0) {
+            player.gold += parseInt(amount)*cropMarket.get(crop)!;
+            player.farms.get(crop)!.stockpile -= parseInt(amount);
+        }
+    } catch(err) {
+        console.error(err);
+    }
+}
 window.setInterval(() => {
     timer += tickRate;
 
@@ -161,7 +309,7 @@ window.setInterval(() => {
 
     if (timer > visualRate){
         timer -= visualRate;
-        updateText();
+        updateStats();
     }
 
 

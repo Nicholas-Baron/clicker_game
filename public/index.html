@@ -9,25 +9,38 @@
       <div class="row">
         <div class="column">
           <div id="actions-tab">
-            <p class="info-label">Gold: <span id="gold"></span></p>
-            <button id="harvest">Harvest Crops</button>
-            <p class="info-label">People: <span id="people"></span></p>
+            <div id="gold-grain-stats">
+              <p><span id="gold"></span> Gold</p>
+            </div>
+            <button id="harvest" class="red" onclick="handleHarvest()">Harvest Crops</button>
+            <p class="info-label"><span id="people"></span> People</p>
             <div id="soldier">
-              <p class="info-label">soldier: <span></span></p>
-              <button>assign person</button>
-              <button>remove person</button>
+              <p class="info-label"><span id="soldiers"></span> Soldier</p>
+              <button class="blue" onclick="handleAssignSoldier()">assign person</button>
+              <button class="blue" onclick="handleRemoveSoldier()">remove person</button>
+            </div>
+            <div id="farm-menu">
+              <label for="farms">Select Farm:</label>
+              <select id="farms" name="farms" onclick="handleFarmChoice(this)">
+              </select>
             </div>
             <div id="farmer">
-              <p class="info-label">farmer: <span></span></p>
-              <button>assign person</button>
-              <button>remove person</button>
+              <p class="info-label"><span id="farmers"></span> Farmer</p>
+              <button class="blue" onclick="handleAssignFarmer()">assign person</button>
+              <button class="blue" onclick="handleRemoveFarmer()">remove person</button>
             </div>
           </div>
         </div>
         <div class="column">
           <div id="store-tab">
             <p>Store</p>
-
+          </div>
+          <div class="sell-tab">
+            <p class="info-label">sell crops</p>
+            <select id="crops-sale" name="crops-sale">
+            </select>
+            <input type="text" id="amount">
+            <button onclick="sellCrop()">Sell</button>
           </div>
         </div>
       </div>
