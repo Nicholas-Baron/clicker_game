@@ -150,7 +150,7 @@ function setElementInnerHTML(el: tag, content: Printable) {
     el.innerHTML = content.toString();
 }
 function setIdInnerHTML(id: string, content: Printable) {
-    document.getElementById(id)!.innerHTML = content.toString();
+    setElementInnerHTML(document.getElementById(id)!, content);
 }
 
 
@@ -320,4 +320,3 @@ window.onload = () => {
     }, tickRate);
     loadGUI();
 };
-
