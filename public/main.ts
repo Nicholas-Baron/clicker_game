@@ -161,19 +161,19 @@ function handleBuy(ev: MouseEvent) {
             player.farms.set(crop, new Farm(1));
             const stats = document.getElementById("gold-grain-stats");
             const grainStat = document.createElement("p");
-            grainStat.innerHTML = player.farms.get(crop)!.stockpile.toString() + " " + Crop[crop];
             grainStat.id = Crop[crop] + "-stats";
+            setInnerHTML(grainStat.id, player.farms.get(crop)!.stockpile.toString() + " " + Crop[crop]);
 
             const farms = document.getElementById("farms");
             const farmOption = document.createElement("option");
             farmOption.id = Crop[crop] + "-farm-option";
-            farmOption.innerHTML = Crop[crop];
+            setInnerHTML(farmOption.id, Crop[crop]);
             farms!.appendChild(farmOption);
 
             const sellCrops = document.getElementById("crops-sale");
             const cropOption = document.createElement("option");
             cropOption.id = Crop[crop] + "-crop-option";
-            cropOption.innerHTML = Crop[crop];
+            setInnerHTML(cropOption.id, Crop[crop]);
             sellCrops!.appendChild(cropOption);
 
             stats?.appendChild(grainStat);
@@ -190,41 +190,41 @@ function handleBuy(ev: MouseEvent) {
 function loadGUI() {
     cropMarket.forEach((value, key, map) => {
         const button = document.createElement("button");
-        button.innerHTML = Crop[key] + " " + value.toString() + "G";
         button.onclick = handleBuy;
         button.id = Crop[key] + "-store";
+        setInnerHTML(button.id, Crop[key] + " " + value.toString() + "G");
         const store = document.getElementById("store-tab");
         store?.appendChild(button);
     });
 
-    document.getElementById("gold")!.innerHTML = player.gold.toString();
+    setInnerHTML("gold", player.gold.toString());
 
     player.farms.forEach((value: Farm, key: Crop, map: Map<Crop, Farm>) => {
         const parent = document.getElementById("gold-grain-stats");
         const grain = document.createElement("p");
         grain.id = Crop[key] + "-stats";
-        grain.innerHTML = value.stockpile + " " + Crop[key];
+        setInnerHTML(grain.id, value.stockpile + " " + Crop[key]);
         parent!.appendChild(grain);
 
         const farms = document.getElementById("farms");
         const farmOption = document.createElement("option");
         farmOption.id = Crop[key] + "-farm-option";
-        farmOption.innerHTML = Crop[key];
+        setInnerHTML(farmOption.id, Crop[key]);
         farms!.appendChild(farmOption);
 
         const sellCrops = document.getElementById("crops-sale");
         const cropOption = document.createElement("option");
         cropOption.id = Crop[key] + "-crop-option";
-        cropOption.innerHTML = Crop[key];
+        setInnerHTML(cropOption.id, Crop[key]);
         sellCrops!.appendChild(cropOption);
     });
 
 
 
 
-    document.getElementById("people")!.innerHTML = player.idlePopulation.toString();
-    document.getElementById("soldiers")!.innerHTML = player.army.totalSoldiers.toString();
-    document.getElementById("farmers")!.innerHTML = getTotalFarmers().toString();
+    setInnerHTML("people", player.idlePopulation.toString());
+    setInnerHTML("soldiers", player.army.totalSoldiers.toString());
+    setInnerHTML("farmers", getTotalFarmers().toString());
 }
 function getTotalFarmers() {
     let totalFarmers = 0;
@@ -234,14 +234,14 @@ function getTotalFarmers() {
     return totalFarmers;
 }
 function updateStats() {
-    document.getElementById("gold")!.innerHTML = player.gold.toString();
-    document.getElementById("soldiers")!.innerHTML = player.army.totalSoldiers.toString();
-    document.getElementById("farmers")!.innerHTML = getTotalFarmers().toString();
-    document.getElementById("people")!.innerHTML = player.idlePopulation.toString();
+    setInnerHTML("gold", player.gold.toString());
+    setInnerHTML("soldiers", player.army.totalSoldiers.toString());
+    setInnerHTML("farmers", getTotalFarmers().toString());
+    setInnerHTML("people", player.idlePopulation.toString());
     player.farms.forEach((value: Farm, key: Crop, map: Map<Crop, Farm>) => {
-        document.getElementById(Crop[key] + "-stats")!.innerHTML = value.stockpile.toString() + " " + Crop[key];
-        document.getElementById(Crop[key] + "-farm-option")!.innerHTML = Crop[key];
-        document.getElementById(Crop[key] + "-crop-option")!.innerHTML = Crop[key];
+        setInnerHTML(Crop[key] + "-stats", value.stockpile.toString() + " " + Crop[key]);
+        setInnerHTML(Crop[key] + "-farm-option", Crop[key]);
+        setInnerHTML(Crop[key] + "-crop-option", Crop[key]);
     });
 
 }
