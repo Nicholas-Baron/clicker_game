@@ -155,7 +155,8 @@ function setIdInnerHTML(id: string, content: Printable) {
 
 
 function handleBuy(ev: MouseEvent) {
-    const name = (ev.target as HTMLElement).id;
+    const element = ev.target as HTMLElement;
+    const name = element.id;
     const key = name.substring(0, name.indexOf("-"));
     const crop = Crop[key as keyof typeof Crop];
 
@@ -184,7 +185,7 @@ function handleBuy(ev: MouseEvent) {
         }
         else player.farms.get(crop)!.stockpile += 1;
 
-        player.gold-= cropMarket.get(crop)!;
+        player.gold -= cropMarket.get(crop)!;
     }
 
 
@@ -192,7 +193,7 @@ function handleBuy(ev: MouseEvent) {
 
 // load gui
 function loadGUI() {
-    cropMarket.forEach((value, key, map) => {
+    cropMarket.forEach((value, key) => {
         const button = document.createElement("button");
         button.onclick = handleBuy;
         button.id = Crop[key] + "-store";
@@ -205,7 +206,7 @@ function loadGUI() {
 
     setIdInnerHTML("gold", player.gold.toString());
 
-    player.farms.forEach((value: Farm, key: Crop, map: Map<Crop, Farm>) => {
+    player.farms.forEach((value: Farm, key: Crop) => {
         const parent = document.getElementById("gold-grain-stats");
         const grain = document.createElement("p");
         grain.id = Crop[key] + "-stats";
@@ -234,7 +235,7 @@ function loadGUI() {
 }
 function getTotalFarmers() {
     let totalFarmers = 0;
-    player.farms.forEach((value: Farm, key: Crop, map: Map<Crop, Farm>) => {
+    player.farms.forEach((value: Farm) => {
         totalFarmers += value.totalFarmers;
     });
     return totalFarmers;
@@ -244,7 +245,7 @@ function updateStats() {
     setIdInnerHTML("soldiers", player.army.totalSoldiers.toString());
     setIdInnerHTML("farmers", getTotalFarmers().toString());
     setIdInnerHTML("people", player.idlePopulation.toString());
-    player.farms.forEach((value: Farm, key: Crop, map: Map<Crop, Farm>) => {
+    player.farms.forEach((value: Farm, key: Crop) => {
         setIdInnerHTML(Crop[key] + "-stats", value.stockpile.toString() + " " + Crop[key]);
         setIdInnerHTML(Crop[key] + "-farm-option", Crop[key]);
         setIdInnerHTML(Crop[key] + "-crop-option", Crop[key]);
@@ -301,8 +302,8 @@ function sellCrop() {
 
         if(isNaN(Number(amount))) return;
         const crop = Crop[selectedCrop as keyof typeof Crop];
-        if(player.farms.get(crop)!.stockpile > 0) {
-            player.gold += parseInt(amount)*cropMarket.get(crop)!;
+        if(player.farms.get(crop)!.stockpile > 0 && parseInt(amount) <= player.farms.get(crop)!.stockpile) {
+            player.gold += parseInt(amount) * cropMarket.get(crop)!;
             player.farms.get(crop)!.stockpile -= parseInt(amount);
         }
     } catch(err) {
