@@ -197,7 +197,6 @@ function loadGUI() {
         const button = document.createElement("button");
         button.onclick = handleBuy;
         button.id = Crop[key] + "-store";
-        console.log(button, key, value);
         setElementInnerHTML(button, Crop[key] + " " + value.toString() + "G");
         const store = document.getElementById("store-tab");
         store?.appendChild(button);
@@ -224,9 +223,6 @@ function loadGUI() {
         setElementInnerHTML(cropOption, Crop[key]);
         sellCrops!.appendChild(cropOption);
     });
-
-
-
 
     setIdInnerHTML("people", player.idlePopulation.toString());
     setIdInnerHTML("soldiers", player.army.totalSoldiers.toString());
