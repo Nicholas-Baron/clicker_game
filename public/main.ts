@@ -26,7 +26,7 @@ const cropMarket = new Map(
 );
 
 // Food eaten by one person
-const consumptionRate = 0.5;
+const consumptionRate = 0.07;
 
 // A farm
 class Farm {
@@ -38,12 +38,15 @@ class Farm {
         console.assert(this.stockpile > 0);
     }
 
-    // TODO: What if stockpile hits 0 and all food is eaten by the farmers
+
     harvest(crop: Crop){
         const amountGrown = Math.min(this.totalFarmers, this.stockpile);
         // Non-null assertion as a Map may not have every entry ready
-        this.stockpile += amountGrown * cropGrowthRate.get(crop)!;
-        this.stockpile -= this.totalFarmers * consumptionRate;
+        if(this.stockpile - this.totalFarmers * consumptionRate > 0) {
+            this.stockpile += amountGrown * cropGrowthRate.get(crop)!;
+            this.stockpile -= this.totalFarmers * consumptionRate;
+            this.stockpile = Math.ceil(this.stockpile);
+        }
         console.assert(this.stockpile > 0);
     }
 }
@@ -88,6 +91,8 @@ class Kingdom {
     }
 
     orderHarvest() {
+        console.log(this.farms?.size);
+
         this.farms.forEach(
             (farm, crop) => farm.harvest(crop)
         );
@@ -151,7 +156,9 @@ function setElementInnerHTML(el: tag, content: Printable) {
 function setIdInnerHTML(id: string, content: Printable) {
     setElementInnerHTML(document.getElementById(id)!, content);
 }
-
+function percise(num: number, sig: number) {
+    return Number(num.toFixed(sig));
+}
 
 function handleBuy(ev: MouseEvent) {
     const element = ev.target as HTMLElement;
@@ -244,11 +251,12 @@ function updateStats() {
         setIdInnerHTML(Crop[key] + "-farm-option", Crop[key]);
         setIdInnerHTML(Crop[key] + "-crop-option", Crop[key]);
     });
+    if(player.farms.size > 0) player.orderHarvest();
 
 }
-// function handleHarvest() {
-
-// }
+function handleHarvest() {
+    player.orderHarvest();
+}
 function handleAssignFarmer() {
     if(player.idlePopulation > 0){
         player.idlePopulation--;
@@ -276,15 +284,6 @@ function handleRemoveSoldier() {
 function handleFarmChoice(element: HTMLInputElement) {
     selectedFarm = element.value;
 }
-// function handleCropChoice(element: HTMLInputElement) {
-//     selectedCrop = element.value;
-// }
-// function handleSellChoice(element: HTMLInputElement) {
-
-// }
-// function handleSellAmount(element: HTMLInputElement) {
-//     sellAmount = element.value;
-// }
 function sellCrop() {
     try {
         const sellAmount = document.getElementById("amount") as HTMLInputElement;
