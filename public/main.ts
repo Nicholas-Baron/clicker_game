@@ -79,11 +79,12 @@ function getRandInt(min:number, max:number):number {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
+const startingHealth = 100;
 
 class Kingdom {
     name: string;
     // TODO: Better define health
-    health = 100;
+    health = startingHealth;
     gold = 0;
     idlePopulation: number;
     army = new Army();
