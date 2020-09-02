@@ -123,7 +123,6 @@ const minStartingPop = 1;
 const maxStartingPop = 10;
 
 const kingdoms = [
-    // TODO: Allow player to add own name
     new Kingdom(promptPlayer("Enter the name of your kingdom"), getRandInt(minStartingPop, maxStartingPop)), // player
     //TODO: Add other kingdoms
 ];
