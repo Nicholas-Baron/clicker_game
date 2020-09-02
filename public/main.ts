@@ -123,13 +123,20 @@ const minStartingPop = 1;
 const maxStartingPop = 10;
 
 const kingdoms = [
-    new Kingdom("player", getRandInt(minStartingPop, maxStartingPop)), // player
+    new Kingdom(promptPlayer("Enter the name of your kingdom"), getRandInt(minStartingPop, maxStartingPop)), // player
     //TODO: Add other kingdoms
 ];
 
 // Init player data
 const player = kingdoms[0];
 player.farms.set(Crop.Rye, new Farm(getRandInt(minStartingRye, maxStartingRye)));
+
+function promptPlayer(message: string): string {
+    let result = null;
+    while(result == null)
+        result = window.prompt(message, "");
+    return result;
+}
 
 function updateText() {
 
