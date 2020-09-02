@@ -198,7 +198,6 @@ function loadGUI() {
         button.onclick = handleBuy;
         button.id = Crop[key] + "-store";
         console.log(button, key, value);
-        //button.innerHTML = Crop[key] + " " + value.toString() + "G";
         setElementInnerHTML(button, Crop[key] + " " + value.toString() + "G");
         const store = document.getElementById("store-tab");
         store?.appendChild(button);
