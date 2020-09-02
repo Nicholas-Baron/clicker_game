@@ -1,8 +1,23 @@
+
+
 * {
     margin: 0;
     padding: 0;
 }
-button {
+.blue {
+    border: 1px solid #00f;
+}
+.red {
+    border: 1px solid #f00;
+}
+.green {
+    border: 1px solid #0f0;
+}
+.container {
+    width: 90%;
+    margin: 0 auto;
+}
+/* button {
     background-color: #FFFFFF;
     border: none;
     color: black;
@@ -19,14 +34,42 @@ button:hover {
 
 button:active {
     background-color: #ececec;
+} */
+button {
+    padding: .5em;
 }
-
 .row {
     display: flex;
+
     height: 100vh;
-    width: 50%;
+    width: 100%;
 }
 .column {
     height: 100%;
     width: 100%;
+
+}
+
+#store-tab {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    margin-top: 2em;
+}
+#store-tab button {
+    margin-top: 1em;
+}
+#actions-tab {
+    margin-top: 2em;
+}
+.info-label {
+    margin-top: 0.3em;
+    margin-bottom: 0.5em;
+}
+#gold-grain-stats {
+    margin-bottom: 1em;
+}
+#farm-menu {
+    margin-bottom: 0.3em;
+    margin-top: 1em;
 }
