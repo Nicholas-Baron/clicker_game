@@ -145,8 +145,12 @@ function promptPlayer(message: string): string {
 }
 
 interface Printable { toString(): string }
-function setInnerHTML(id: string, content: Printable) {
-  document.getElementById(id)!.innerHTML = content.toString();
+type tag = HTMLElement | HTMLInputElement;
+function setElementInnerHTML(el: tag, content: Printable) {
+    el.innerHTML = content.toString();
+}
+function setIdInnerHTML(id: string, content: Printable) {
+    document.getElementById(id)!.innerHTML = content.toString();
 }
 
 
@@ -162,18 +166,18 @@ function handleBuy(ev: MouseEvent) {
             const stats = document.getElementById("gold-grain-stats");
             const grainStat = document.createElement("p");
             grainStat.id = Crop[crop] + "-stats";
-            setInnerHTML(grainStat.id, player.farms.get(crop)!.stockpile.toString() + " " + Crop[crop]);
+            setElementInnerHTML(grainStat, player.farms.get(crop)!.stockpile.toString() + " " + Crop[crop]);
 
             const farms = document.getElementById("farms");
             const farmOption = document.createElement("option");
             farmOption.id = Crop[crop] + "-farm-option";
-            setInnerHTML(farmOption.id, Crop[crop]);
+            setElementInnerHTML(farmOption, Crop[crop]);
             farms!.appendChild(farmOption);
 
             const sellCrops = document.getElementById("crops-sale");
             const cropOption = document.createElement("option");
             cropOption.id = Crop[crop] + "-crop-option";
-            setInnerHTML(cropOption.id, Crop[crop]);
+            setElementInnerHTML(cropOption, Crop[crop]);
             sellCrops!.appendChild(cropOption);
 
             stats?.appendChild(grainStat);
@@ -192,39 +196,41 @@ function loadGUI() {
         const button = document.createElement("button");
         button.onclick = handleBuy;
         button.id = Crop[key] + "-store";
-        setInnerHTML(button.id, Crop[key] + " " + value.toString() + "G");
+        console.log(button, key, value);
+        //button.innerHTML = Crop[key] + " " + value.toString() + "G";
+        setElementInnerHTML(button, Crop[key] + " " + value.toString() + "G");
         const store = document.getElementById("store-tab");
         store?.appendChild(button);
     });
 
-    setInnerHTML("gold", player.gold.toString());
+    setIdInnerHTML("gold", player.gold.toString());
 
     player.farms.forEach((value: Farm, key: Crop, map: Map<Crop, Farm>) => {
         const parent = document.getElementById("gold-grain-stats");
         const grain = document.createElement("p");
         grain.id = Crop[key] + "-stats";
-        setInnerHTML(grain.id, value.stockpile + " " + Crop[key]);
+        setElementInnerHTML(grain, value.stockpile + " " + Crop[key]);
         parent!.appendChild(grain);
 
         const farms = document.getElementById("farms");
         const farmOption = document.createElement("option");
         farmOption.id = Crop[key] + "-farm-option";
-        setInnerHTML(farmOption.id, Crop[key]);
+        setElementInnerHTML(farmOption, Crop[key]);
         farms!.appendChild(farmOption);
 
         const sellCrops = document.getElementById("crops-sale");
         const cropOption = document.createElement("option");
         cropOption.id = Crop[key] + "-crop-option";
-        setInnerHTML(cropOption.id, Crop[key]);
+        setElementInnerHTML(cropOption, Crop[key]);
         sellCrops!.appendChild(cropOption);
     });
 
 
 
 
-    setInnerHTML("people", player.idlePopulation.toString());
-    setInnerHTML("soldiers", player.army.totalSoldiers.toString());
-    setInnerHTML("farmers", getTotalFarmers().toString());
+    setIdInnerHTML("people", player.idlePopulation.toString());
+    setIdInnerHTML("soldiers", player.army.totalSoldiers.toString());
+    setIdInnerHTML("farmers", getTotalFarmers().toString());
 }
 function getTotalFarmers() {
     let totalFarmers = 0;
@@ -234,14 +240,14 @@ function getTotalFarmers() {
     return totalFarmers;
 }
 function updateStats() {
-    setInnerHTML("gold", player.gold.toString());
-    setInnerHTML("soldiers", player.army.totalSoldiers.toString());
-    setInnerHTML("farmers", getTotalFarmers().toString());
-    setInnerHTML("people", player.idlePopulation.toString());
+    setIdInnerHTML("gold", player.gold.toString());
+    setIdInnerHTML("soldiers", player.army.totalSoldiers.toString());
+    setIdInnerHTML("farmers", getTotalFarmers().toString());
+    setIdInnerHTML("people", player.idlePopulation.toString());
     player.farms.forEach((value: Farm, key: Crop, map: Map<Crop, Farm>) => {
-        setInnerHTML(Crop[key] + "-stats", value.stockpile.toString() + " " + Crop[key]);
-        setInnerHTML(Crop[key] + "-farm-option", Crop[key]);
-        setInnerHTML(Crop[key] + "-crop-option", Crop[key]);
+        setIdInnerHTML(Crop[key] + "-stats", value.stockpile.toString() + " " + Crop[key]);
+        setIdInnerHTML(Crop[key] + "-farm-option", Crop[key]);
+        setIdInnerHTML(Crop[key] + "-crop-option", Crop[key]);
     });
 
 }
@@ -303,15 +309,19 @@ function sellCrop() {
         console.error(err);
     }
 }
-window.setInterval(() => {
-    timer += tickRate;
+window.onload = () => {
+    window.setInterval(() => {
+        timer += tickRate;
 
 
 
-    if (timer > visualRate){
-        timer -= visualRate;
-        updateStats();
-    }
+        if (timer > visualRate){
+            timer -= visualRate;
+            updateStats();
+        }
 
 
-}, tickRate);
+    }, tickRate);
+    loadGUI();
+};
+
