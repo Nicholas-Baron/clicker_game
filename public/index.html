@@ -13,22 +13,22 @@
             <div id="gold-grain-stats">
               <p><span id="gold"></span> Gold</p>
             </div>
-            <button id="harvest" class="red" onclick="handleHarvest()">Harvest Crops</button>
-            <p class="info-label"><span id="people"></span> People</p>
+            <button id="harvest" class="btn" onclick="handleHarvest()">Harvest Crops</button>
+            <p class="info-label mt-3"><span id="people"></span> People</p>
             <div id="soldier">
               <p class="info-label"><span id="soldiers"></span> Soldier</p>
-              <button class="blue" onclick="handleAssignSoldier()">assign person</button>
-              <button class="blue" onclick="handleRemoveSoldier()">remove person</button>
+              <button class="btn" onclick="handleAssignSoldier()">Assign Person</button>
+              <button class="btn" onclick="handleRemoveSoldier()">Remove Person</button>
             </div>
             <div id="farm-menu">
               <label for="farms">Select Farm:</label>
-              <select id="farms" name="farms" onclick="handleFarmChoice(this)">
+              <select id="farms" name="farms" onclick="handleFarmChoice(this)" class="select-field">
               </select>
             </div>
             <div id="farmer">
               <p class="info-label"><span id="farmers"></span> Farmer</p>
-              <button class="blue" onclick="handleAssignFarmer()">assign person</button>
-              <button class="blue" onclick="handleRemoveFarmer()">remove person</button>
+              <button class="btn" onclick="handleAssignFarmer()">Assign Person</button>
+              <button class="btn" onclick="handleRemoveFarmer()">Remove Person</button>
             </div>
           </div>
         </div>
@@ -37,11 +37,11 @@
             <p>Store</p>
           </div>
           <div class="sell-tab">
-            <p class="info-label">sell crops</p>
-            <select id="crops-sale" name="crops-sale">
+            <p class="info-label mt-3">Sell Crops</p>
+            <select id="crops-sale" name="crops-sale" class="select-field">
             </select>
             <input type="text" id="amount">
-            <button onclick="sellCrop()">Sell</button>
+            <button onclick="sellCrop()" class="btn">Sell</button>
           </div>
         </div>
       </div>
