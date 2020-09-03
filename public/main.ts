@@ -7,22 +7,26 @@ enum Crop {
     Barley,
     Rye,
 }
-
+enum Store {
+    WheatFarm,
+    BarleyFarm,
+    Person
+}
 // FIXME: This uses autoincrementing (1,2,3,...), which may not be desireable.
 const enum DefaultCropPrices {
     Rye = 1,
     Barley,
     Wheat,
 }
-
 const crops = [Crop.Wheat, Crop.Barley, Crop.Rye];
 
 const baseCropGrowthRate = 0.1;
+const clickGrowthRate = 0.5;
 const cropGrowthRate: Map<Crop, number> = new Map();
 // TODO: Define different growth rates for crops?
 crops.forEach(crop => cropGrowthRate.set(crop, baseCropGrowthRate));
 
-// Price per 1 unit of crop
+// Value per 1 unit of crop
 // TODO: Randomly move the price up and down
 const cropMarket = new Map(
     [
@@ -31,7 +35,12 @@ const cropMarket = new Map(
         [Crop.Rye, DefaultCropPrices.Rye],
     ]
 );
-
+const farmPrices = new Map(
+    [
+        [Crop.Barley, 100],
+        [Crop.Wheat, 1000]
+    ]
+);
 // Food eaten by one person
 const consumptionRate = 0.07;
 
@@ -55,6 +64,11 @@ class Farm {
             this.stockpile = Math.ceil(this.stockpile);
         }
         console.assert(this.stockpile > 0);
+    }
+    playerHarvest(crop: Crop) {
+        // TODO: add upgrades to click rate
+        this.stockpile += clickGrowthRate * (1 + this.totalFarmers);
+        this.stockpile = Math.ceil(this.stockpile);
     }
 }
 
@@ -93,8 +107,8 @@ class Kingdom {
     army = new Army();
     farms: Map<Crop, Farm> = new Map();
 
-    constructor(name: string, initialPopulation: number){
-        this.idlePopulation = initialPopulation;
+    constructor(name: string, idlePopulation: number){
+        this.idlePopulation = idlePopulation;
         this.name = name;
     }
 
@@ -132,11 +146,8 @@ class Kingdom {
 const minStartingRye = 50;
 const maxStartingRye = 100;
 
-const minStartingPop = 1;
-const maxStartingPop = 10;
-
 const kingdoms = [
-    new Kingdom(promptPlayer("Enter the name of your kingdom"), getRandInt(minStartingPop, maxStartingPop)), // player
+    new Kingdom(promptPlayer("Enter the name of your kingdom"), getRandInt(4, 10)), // player
     //TODO: Add other kingdoms
 ];
 
@@ -174,32 +185,33 @@ function handleBuy(ev: MouseEvent) {
     const key = name.substring(0, name.indexOf("-"));
     const crop = Crop[key as keyof typeof Crop];
 
-    if(player.gold >= cropMarket.get(crop)!) {
 
-        if(!player.farms.has(crop)) {
-            player.farms.set(crop, new Farm(1));
-            const stats = document.getElementById("gold-grain-stats");
-            const grainStat = document.createElement("p");
-            grainStat.id = Crop[crop] + "-stats";
-            setElementInnerHTML(grainStat, player.farms.get(crop)!.stockpile.toString() + " " + Crop[crop]);
+    if(player.gold >= farmPrices.get(crop)!) {
+        if(crop !== null || crop !== undefined) {
+            if(!player.farms.has(crop)!) {
+                player.farms.set(crop, new Farm(1));
+                const stats = document.getElementById("gold-grain-stats");
+                const grainStat = document.createElement("p");
+                grainStat.id = Crop[crop] + "-stats";
+                setElementInnerHTML(grainStat, player.farms.get(crop)!.stockpile.toString() + " " + Crop[crop]);
 
-            const farms = document.getElementById("farms");
-            const farmOption = document.createElement("option");
-            farmOption.id = Crop[crop] + "-farm-option";
-            setElementInnerHTML(farmOption, Crop[crop]);
-            farms!.appendChild(farmOption);
+                const farms = document.getElementById("farms");
+                const farmOption = document.createElement("option");
+                farmOption.id = Crop[crop] + "-farm-option";
+                setElementInnerHTML(farmOption, Crop[crop]);
+                farms!.appendChild(farmOption);
 
-            const sellCrops = document.getElementById("crops-sale");
-            const cropOption = document.createElement("option");
-            cropOption.id = Crop[crop] + "-crop-option";
-            setElementInnerHTML(cropOption, Crop[crop]);
-            sellCrops!.appendChild(cropOption);
+                const sellCrops = document.getElementById("crops-sale");
+                const cropOption = document.createElement("option");
+                cropOption.id = Crop[crop] + "-crop-option";
+                setElementInnerHTML(cropOption, Crop[crop]);
+                sellCrops!.appendChild(cropOption);
 
-            stats?.appendChild(grainStat);
+                stats?.appendChild(grainStat);
+            }
         }
-        else player.farms.get(crop)!.stockpile += 1;
-
-        player.gold -= cropMarket.get(crop)!;
+        player.gold -= farmPrices.get(crop)!;
+        document.getElementById(name)!.style.display = "none";
     }
 
 
@@ -209,15 +221,21 @@ function handleBuy(ev: MouseEvent) {
 
 // load gui
 function loadGUI() {
-    cropMarket.forEach((value, key) => {
-        const button = document.createElement("button");
-        button.onclick = handleBuy;
-        button.id = Crop[key] + "-store";
-        button.className = "btn";
-        setElementInnerHTML(button, Crop[key] + " " + value.toString() + "G");
-        const store = document.getElementById("store-tab");
-        store?.appendChild(button);
+    const store = document.getElementById("store-tab");
+    cropMarket.forEach((value, key: Crop) => {
+        if(key != Crop.Rye){
+            const button = document.createElement("button");
+            button.onclick = handleBuy;
+            button.id = Crop[key] + "-store";
+            button.className = "btn";
+            setElementInnerHTML(button, Crop[key] + " " + farmPrices.get(key) + "G");
+            store?.appendChild(button);
+        }
     });
+
+    // const button = document.createElement("button");
+    // // setElementInnerHTML(button, "Hire Person" + Store.HirePrice);
+    // button.onclick = handleBuy;
 
     setIdInnerHTML("gold", player.gold.toString());
 
@@ -265,7 +283,9 @@ function updateStats() {
 
 }
 function handleHarvest() {
-    player.orderHarvest();
+    player.farms.forEach((value: Farm, key: Crop) => {
+        value.playerHarvest(key);
+    });
 }
 function handleAssignFarmer() {
     if(player.idlePopulation > 0){
