@@ -3,6 +3,8 @@
 * {
     margin: 0;
     padding: 0;
+    font-size: 1rem;
+    font-family: sans-serif;
 }
 .blue {
     border: 1px solid #00f;
@@ -35,6 +37,18 @@ button:hover {
 button:active {
     background-color: #ececec;
 } */
+.btn {
+    background-color: #007bff;
+    font-size: 1rem;
+    padding: .5em;
+    border-radius: 5px;
+    outline: 0;
+    border: 0;
+    color: #fff;
+}
+.btn-sm {
+    padding: .1em !important;
+}
 button {
     padding: .5em;
 }
@@ -42,19 +56,22 @@ button {
     display: flex;
 
     height: 100vh;
-    width: 100%;
+    width: 50%;
 }
 .column {
     height: 100%;
     width: 100%;
-
+    margin-right: 1em;
 }
 
 #store-tab {
     display: flex;
     flex-direction: column;
-    width: 25%;
+    width: 100%;
     margin-top: 2em;
+}
+.border {
+    border: 1px solid #000;
 }
 #store-tab button {
     margin-top: 1em;
@@ -71,5 +88,18 @@ button {
 }
 #farm-menu {
     margin-bottom: 0.3em;
-    margin-top: 1em;
+    margin-top: 1.5em;
+}
+#amount {
+    padding: .2em;
+    width: 150px;
+}
+.select-field {
+    padding: .2em;
+}
+.mt-3 {
+    margin-top: 1.5em;
+}
+#soldier {
+    display: none;
 }

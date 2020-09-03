@@ -204,6 +204,8 @@ function handleBuy(ev: MouseEvent) {
 
 
 }
+// TODO: remove toStrings
+
 
 // load gui
 function loadGUI() {
@@ -211,6 +213,7 @@ function loadGUI() {
         const button = document.createElement("button");
         button.onclick = handleBuy;
         button.id = Crop[key] + "-store";
+        button.className = "btn";
         setElementInnerHTML(button, Crop[key] + " " + value.toString() + "G");
         const store = document.getElementById("store-tab");
         store?.appendChild(button);
@@ -240,19 +243,18 @@ function loadGUI() {
 
     setIdInnerHTML("people", player.idlePopulation.toString());
     setIdInnerHTML("soldiers", player.army.totalSoldiers.toString());
-    setIdInnerHTML("farmers", getTotalFarmers().toString());
+    //setIdInnerHTML("farmers", getTotalFarmers().toString());
+    selectFarmer();
 }
-function getTotalFarmers() {
-    let totalFarmers = 0;
-    player.farms.forEach((value: Farm) => {
-        totalFarmers += value.totalFarmers;
-    });
-    return totalFarmers;
+function selectFarmer() {
+    setIdInnerHTML("farmers", player.farms.get(Crop[selectedFarm as keyof typeof Crop])!.totalFarmers + " " + selectedFarm);
 }
+
 function updateStats() {
     setIdInnerHTML("gold", player.gold.toString());
     setIdInnerHTML("soldiers", player.army.totalSoldiers.toString());
-    setIdInnerHTML("farmers", getTotalFarmers().toString());
+    selectFarmer();
+    //setIdInnerHTML("farmers", getTotalFarmers().toString());
     setIdInnerHTML("people", player.idlePopulation.toString());
     player.farms.forEach((value: Farm, key: Crop) => {
         setIdInnerHTML(Crop[key] + "-stats", value.stockpile.toString() + " " + Crop[key]);
