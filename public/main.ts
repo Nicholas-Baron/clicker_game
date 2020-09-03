@@ -8,6 +8,13 @@ enum Crop {
     Rye,
 }
 
+// FIXME: This uses autoincrementing (1,2,3,...), which may not be desireable.
+const enum DefaultCropPrices {
+    Rye = 1,
+    Barley,
+    Wheat,
+}
+
 const crops = [Crop.Wheat, Crop.Barley, Crop.Rye];
 
 const baseCropGrowthRate = 0.1;
@@ -19,9 +26,9 @@ crops.forEach(crop => cropGrowthRate.set(crop, baseCropGrowthRate));
 // TODO: Randomly move the price up and down
 const cropMarket = new Map(
     [
-        [Crop.Wheat, 3],
-        [Crop.Barley, 2],
-        [Crop.Rye, 1],
+        [Crop.Wheat, DefaultCropPrices.Wheat],
+        [Crop.Barley, DefaultCropPrices.Barley],
+        [Crop.Rye, DefaultCropPrices.Rye],
     ]
 );
 
@@ -72,11 +79,12 @@ function getRandInt(min:number, max:number):number {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
+const startingHealth = 100;
 
 class Kingdom {
     name: string;
     // TODO: Better define health
-    health = 100;
+    health = startingHealth;
     gold = 0;
     idlePopulation: number;
     army = new Army();
