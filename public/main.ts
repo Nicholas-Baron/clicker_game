@@ -67,8 +67,7 @@ class Farm {
     }
     playerHarvest(crop: Crop) {
         // TODO: add upgrades to click rate
-        this.stockpile += clickGrowthRate * (1 + this.totalFarmers);
-        this.stockpile = Math.ceil(this.stockpile);
+        this.stockpile += Math.ceil(clickGrowthRate * (1 + this.totalFarmers));
     }
 }
 
