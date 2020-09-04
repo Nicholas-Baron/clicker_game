@@ -106,10 +106,7 @@ class Kingdom {
     army = new Army();
     farms: Map<Crop, Farm> = new Map();
 
-    constructor(name: string, idlePopulation: number){
-        this.idlePopulation = idlePopulation;
-        this.name = name;
-    }
+    constructor(public name: string, public idlePopulation: number){}
 
     orderHarvest() {
         console.log(this.farms?.size);
