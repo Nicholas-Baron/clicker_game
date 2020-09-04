@@ -275,9 +275,7 @@ function updateStats() {
 
 }
 function handleHarvest() {
-    player.farms.forEach((value: Farm, key: Crop) => {
-        value.playerHarvest(key);
-    });
+    player.farms.forEach(value => value.playerHarvest(key));
 }
 function handleAssignFarmer() {
     if(player.idlePopulation > 0){
