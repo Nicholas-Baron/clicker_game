@@ -229,10 +229,6 @@ function loadGUI() {
         }
     });
 
-    // const button = document.createElement("button");
-    // // setElementInnerHTML(button, "Hire Person" + Store.HirePrice);
-    // button.onclick = handleBuy;
-
     setIdInnerHTML("gold", player.gold.toString());
 
     player.farms.forEach((value: Farm, key: Crop) => {
