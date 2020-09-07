@@ -74,6 +74,7 @@ class Farm {
 // Loot is an interface b/c kingdom (currently) can become a Loot object
 interface Loot {
     gold: number;
+    idlePopulation: number;
     farms: Map<Crop, Farm>;
 }
 
@@ -81,7 +82,6 @@ const baseDPSPerSoldier = 1;
 
 class Army {
     totalSoldiers = 0;
-    dpsPerSoldier = baseDPSPerSoldier;
 
     attack(kingdom: Kingdom): Loot {
         //TODO: How to attack a kingdom
@@ -91,16 +91,19 @@ class Army {
 }
 
 // Returns a random integer inclusive on both ends
-function getRandInt(min:number, max:number):number {
+function randInt(min:number, max:number):number {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
+// Returns a random float inclusive only on min
+function randFloat(min:number, max:number):number {
+    return Math.random() * (max - min) + min
 }
 
 const startingHealth = 100;
 
 class Kingdom {
     name: string;
-    // TODO: Better define health
-    health = startingHealth;
     gold = 0;
     idlePopulation: number;
     army = new Army();
@@ -141,16 +144,16 @@ class Kingdom {
 
 const minStartingRye = 50;
 const maxStartingRye = 100;
-const minStart = 4;
-const maxStart = 10;
+const minStartingPop = 4;
+const maxStartingPop = 10;
 const kingdoms = [
-    new Kingdom(promptPlayer("Enter the name of your kingdom"), getRandInt(minStart, maxStart)), // player
+    new Kingdom(promptPlayer("Enter the name of your kingdom"), randInt(minStartingPop, maxStartingPop)), // player
     //TODO: Add other kingdoms
 ];
 
 // Init player data
 const player = kingdoms[0];
-player.farms.set(Crop.Rye, new Farm(getRandInt(minStartingRye, maxStartingRye)));
+player.farms.set(Crop.Rye, new Farm(randInt(minStartingRye, maxStartingRye)));
 
 // indicies for select fields
 let selectedFarm = "Rye";
