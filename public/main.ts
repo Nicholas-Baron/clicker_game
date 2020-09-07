@@ -84,15 +84,15 @@ class Army {
     totalSoldiers = 0;
 
     attack(opponent: Kingdom): Loot | null {
-        if(this.totalSoldiers * randFloat(0.75, 1.25) < opponent.strength) return null
+        if(this.totalSoldiers * randFloat(0.75, 1.25) < opponent.strength) return null;
 
-        let lootFarms = new Map();
+        const lootFarms = new Map();
 
         opponent.farms.forEach((farm, crop) => {
-            let lootedFarm = new Farm(farm.stockpile * 0.75)
-            lootedFarm.totalFarmers = farm.totalFarmers * 0.75
-            lootFarms.set(crop, lootedFarm)
-        })
+            const lootedFarm = new Farm(farm.stockpile * 0.75);
+            lootedFarm.totalFarmers = farm.totalFarmers * 0.75;
+            lootFarms.set(crop, lootedFarm);
+        });
 
         return {
             gold: opponent.gold - this.totalSoldiers,
@@ -109,7 +109,7 @@ function randInt(min:number, max:number):number {
 
 // Returns a random float inclusive only on min
 function randFloat(min:number, max:number):number {
-    return Math.random() * (max - min) + min
+    return Math.random() * (max - min) + min;
 }
 
 const startingHealth = 100;
@@ -124,28 +124,28 @@ class Kingdom {
     constructor(public name: string, public idlePopulation: number){}
 
     attack(opponent: Kingdom) {
-        const waitTime = (opponent.strength + this.army.totalSoldiers) / 100
+        const waitTime = (opponent.strength + this.army.totalSoldiers) / 100;
 
         window.setTimeout(() => {
-            let result = this.army.attack(opponent)
+            const result = this.army.attack(opponent);
             // TODO: Better inform the player of the result
-            if(result == null){
-                alert(`The attack against ${opponent.name} failed.`)
-            }else{
-                alert(`The attack against ${opponent.name} succeded.`)
-                this.gold += result.gold
-                this.idlePopulation += result.idlePopulation
+            if(result == null)
+                alert(`The attack against ${opponent.name} failed.`);
+            else{
+                alert(`The attack against ${opponent.name} succeded.`);
+                this.gold += result.gold;
+                this.idlePopulation += result.idlePopulation;
                 this.farms.forEach((farm, crop) => {
                     // Typescript should know that `result` is not null here,
                     // as we are in the `else` of an `== null` check.
-                    const lootedFarm = result?.farms.get(crop)
+                    const lootedFarm = result?.farms.get(crop);
                     if(lootedFarm != null){
-                        farm.totalFarmers += lootedFarm?.totalFarmers
-                        farm.stockpile += lootedFarm?.stockpile
+                        farm.totalFarmers += lootedFarm?.totalFarmers;
+                        farm.stockpile += lootedFarm?.stockpile;
                     }
-                })
+                });
             }
-        }, waitTime)
+        }, waitTime);
     }
 
     orderHarvest() {
@@ -179,7 +179,7 @@ class Kingdom {
     }
 
     get strength() {
-        return this.idlePopulation * 0.25 + this.army.totalSoldiers
+        return this.idlePopulation * 0.25 + this.army.totalSoldiers;
     }
 }
 
