@@ -83,10 +83,22 @@ const baseDPSPerSoldier = 1;
 class Army {
     totalSoldiers = 0;
 
-    attack(kingdom: Kingdom): Loot {
-        //TODO: How to attack a kingdom
-        console.assert(false, "Attacking a Kingdom is not implemented");
-        return kingdom;
+    attack(opponent: Kingdom): Loot | null {
+        if(this.totalSoldiers * randFloat(0.75, 1.25) < opponent.strength) return null
+
+        let lootFarms = new Map();
+
+        opponent.farms.forEach((farm, crop) => {
+            let lootedFarm = new Farm(farm.stockpile * 0.75)
+            lootedFarm.totalFarmers = farm.totalFarmers * 0.75
+            lootFarms.set(crop, lootedFarm)
+        })
+
+        return {
+            gold: opponent.gold - this.totalSoldiers,
+            idlePopulation: opponent.idlePopulation * 0.75,
+            farms: lootFarms,
+        };
     }
 }
 
@@ -110,6 +122,31 @@ class Kingdom {
     farms: Map<Crop, Farm> = new Map();
 
     constructor(public name: string, public idlePopulation: number){}
+
+    attack(opponent: Kingdom) {
+        const waitTime = (opponent.strength + this.army.totalSoldiers) / 100
+
+        window.setTimeout(() => {
+            let result = this.army.attack(opponent)
+            // TODO: Better inform the player of the result
+            if(result == null){
+                alert(`The attack against ${opponent.name} failed.`)
+            }else{
+                alert(`The attack against ${opponent.name} succeded.`)
+                this.gold += result.gold
+                this.idlePopulation += result.idlePopulation
+                this.farms.forEach((farm, crop) => {
+                    // Typescript should know that `result` is not null here,
+                    // as we are in the `else` of an `== null` check.
+                    const lootedFarm = result?.farms.get(crop)
+                    if(lootedFarm != null){
+                        farm.totalFarmers += lootedFarm?.totalFarmers
+                        farm.stockpile += lootedFarm?.stockpile
+                    }
+                })
+            }
+        }, waitTime)
+    }
 
     orderHarvest() {
         console.log(this.farms?.size);
@@ -139,6 +176,10 @@ class Kingdom {
         this.gold += profit;
 
         // TODO: Decrease price after sale
+    }
+
+    get strength() {
+        return this.idlePopulation * 0.25 + this.army.totalSoldiers
     }
 }
 
