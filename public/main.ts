@@ -112,9 +112,7 @@ function randFloat(min:number, max:number):number {
 }
 
 class Kingdom {
-    name: string;
     gold = 0;
-    idlePopulation: number;
     army = new Army();
     farms: Map<Crop, Farm> = new Map();
 
