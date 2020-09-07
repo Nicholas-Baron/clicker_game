@@ -47,19 +47,17 @@ const consumptionRate = 0.07;
 // A farm
 class Farm {
     totalFarmers = 0;
-    stockpile: number;
 
-    constructor(initalSeed: number){
-        this.stockpile = initalSeed;
+    constructor(public stockpile: number){
         console.assert(this.stockpile > 0);
     }
 
 
     harvest(crop: Crop){
         const amountGrown = Math.min(this.totalFarmers, this.stockpile);
-        // Non-null assertion as a Map may not have every entry ready
         if(this.stockpile - this.totalFarmers * consumptionRate > 0) {
-            this.stockpile += amountGrown * cropGrowthRate.get(crop)!;
+            const growthRate = cropGrowthRate.get(crop) ?? baseCropGrowthRate;
+            this.stockpile += amountGrown * growthRate;
             this.stockpile -= this.totalFarmers * consumptionRate;
             this.stockpile = Math.ceil(this.stockpile);
         }
