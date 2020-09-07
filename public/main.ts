@@ -78,25 +78,25 @@ interface Loot {
     farms: Map<Crop, Farm>;
 }
 
-const baseDPSPerSoldier = 1;
+const lootMinimum = 0.75;
 
 class Army {
     totalSoldiers = 0;
 
     attack(opponent: Kingdom): Loot | null {
-        if(this.totalSoldiers * randFloat(0.75, 1.25) < opponent.strength) return null;
+        if(this.totalSoldiers * randFloat(lootMinimum, 1.25) < opponent.strength) return null;
 
         const lootFarms = new Map();
 
         opponent.farms.forEach((farm, crop) => {
-            const lootedFarm = new Farm(farm.stockpile * 0.75);
-            lootedFarm.totalFarmers = farm.totalFarmers * 0.75;
+            const lootedFarm = new Farm(farm.stockpile * lootMinimum);
+            lootedFarm.totalFarmers = farm.totalFarmers * lootMinimum;
             lootFarms.set(crop, lootedFarm);
         });
 
         return {
             gold: opponent.gold - this.totalSoldiers,
-            idlePopulation: opponent.idlePopulation * 0.75,
+            idlePopulation: opponent.idlePopulation * lootMinimum,
             farms: lootFarms,
         };
     }
