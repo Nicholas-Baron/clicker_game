@@ -46,12 +46,11 @@ const consumptionRate = 0.07;
 
 // A farm
 class Farm {
-    totalFarmers = 0;
 
-    constructor(public stockpile: number){
-        console.assert(this.stockpile > 0);
+    constructor(public stockpile: number, public totalFarmers = 0){
+        console.assert(this.stockpile > 0, "Stockpile is empty");
+        console.assert(this.totalFarmers >= 0, "Negative farmers?");
     }
-
 
     harvest(crop: Crop){
         const amountGrown = Math.min(this.totalFarmers, this.stockpile);
@@ -88,9 +87,10 @@ class Army {
         const lootFarms = new Map();
 
         opponent.farms.forEach((farm, crop) => {
-            const lootedFarm = new Farm(farm.stockpile * lootMinimum);
-            lootedFarm.totalFarmers = farm.totalFarmers * lootMinimum;
-            lootFarms.set(crop, lootedFarm);
+            lootFarms.set(crop, new Farm(
+                farm.stockpile * lootMinimum,
+                farm.totalFarmers * lootMinimum
+            ));
         });
 
         return {
