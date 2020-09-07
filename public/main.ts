@@ -103,7 +103,8 @@ class Army {
 
 // Returns a random integer inclusive on both ends
 function randInt(min:number, max:number):number {
-    return Math.floor(Math.random() * (max - min + 1) ) + min;
+    console.assert(Number.isInteger(min) && Number.isInteger(max), "randInt should not use non-integer inputs");
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 // Returns a random float inclusive only on min
