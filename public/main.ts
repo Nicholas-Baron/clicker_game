@@ -79,12 +79,13 @@ interface Loot {
 }
 
 const lootMinimum = 0.75;
+const lootMaximum = 1.25;
 
 class Army {
     totalSoldiers = 0;
 
     attack(opponent: Kingdom): Loot | null {
-        if(this.totalSoldiers * randFloat(lootMinimum, 1.25) < opponent.strength) return null;
+        if(this.totalSoldiers * randFloat(lootMinimum, lootMaximum) < opponent.strength) return null;
 
         const lootFarms = new Map();
 
