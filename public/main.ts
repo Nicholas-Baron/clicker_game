@@ -67,8 +67,7 @@ class Farm {
     }
     playerHarvest(crop: Crop) {
         // TODO: add upgrades to click rate
-        this.stockpile += clickGrowthRate * (1 + this.totalFarmers);
-        this.stockpile = Math.ceil(this.stockpile);
+        this.stockpile += Math.ceil(clickGrowthRate * (1 + this.totalFarmers));
     }
 }
 
@@ -107,10 +106,7 @@ class Kingdom {
     army = new Army();
     farms: Map<Crop, Farm> = new Map();
 
-    constructor(name: string, idlePopulation: number){
-        this.idlePopulation = idlePopulation;
-        this.name = name;
-    }
+    constructor(public name: string, public idlePopulation: number){}
 
     orderHarvest() {
         console.log(this.farms?.size);
@@ -234,10 +230,6 @@ function loadGUI() {
         }
     });
 
-    // const button = document.createElement("button");
-    // // setElementInnerHTML(button, "Hire Person" + Store.HirePrice);
-    // button.onclick = handleBuy;
-
     setIdInnerHTML("gold", player.gold.toString());
 
     player.farms.forEach((value: Farm, key: Crop) => {
@@ -284,9 +276,7 @@ function updateStats() {
 
 }
 function handleHarvest() {
-    player.farms.forEach((value: Farm, key: Crop) => {
-        value.playerHarvest(key);
-    });
+    player.farms.forEach(value => value.playerHarvest(key));
 }
 function handleAssignFarmer() {
     if(player.idlePopulation > 0){

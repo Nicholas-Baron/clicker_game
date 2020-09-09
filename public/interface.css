@@ -19,24 +19,6 @@
     width: 90%;
     margin: 0 auto;
 }
-/* button {
-    background-color: #FFFFFF;
-    border: none;
-    color: black;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-}
-
-button:hover {
-    background-color: #e7e7e7;
-}
-
-button:active {
-    background-color: #ececec;
-} */
 .btn {
     background-color: #007bff;
     font-size: 1rem;
@@ -72,16 +54,12 @@ button {
     display: flex;
     flex-direction: column;
     width: 50%;
-    /* margin-top: 2em; */
 }
 .border {
     border: 1px solid #000;
 }
 #store-tab button {
     margin-top: 1em;
-}
-#actions-tab {
-    /* margin-top: 2em; */
 }
 .info-label {
     margin-top: 0.3em;
