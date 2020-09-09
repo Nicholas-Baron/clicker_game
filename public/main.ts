@@ -145,9 +145,10 @@ class Kingdom {
 
 const minStartingRye = 50;
 const maxStartingRye = 100;
-
+const minStart = 4;
+const maxStart = 10;
 const kingdoms = [
-    new Kingdom(promptPlayer("Enter the name of your kingdom"), getRandInt(4, 10)), // player
+    new Kingdom(promptPlayer("Enter the name of your kingdom"), getRandInt(minStart, maxStart)), // player
     //TODO: Add other kingdoms
 ];
 
@@ -209,8 +210,8 @@ function handleBuy(ev: MouseEvent) {
 
                 stats?.appendChild(grainStat);
             }
+            player.gold -= farmPrices.get(crop)!;
         }
-        player.gold -= farmPrices.get(crop)!;
         document.getElementById(name)!.style.display = "none";
     }
 
