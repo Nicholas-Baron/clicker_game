@@ -46,20 +46,17 @@ const consumptionRate = 0.07;
 
 // A farm
 class Farm {
-    totalFarmers = 0;
-    stockpile: number;
 
-    constructor(initalSeed: number){
-        this.stockpile = initalSeed;
-        console.assert(this.stockpile > 0);
+    constructor(public stockpile: number, public totalFarmers = 0){
+        console.assert(this.stockpile > 0, "Stockpile is empty");
+        console.assert(this.totalFarmers >= 0, "Negative farmers?");
     }
-
 
     harvest(crop: Crop){
         const amountGrown = Math.min(this.totalFarmers, this.stockpile);
-        // Non-null assertion as a Map may not have every entry ready
         if(this.stockpile - this.totalFarmers * consumptionRate > 0) {
-            this.stockpile += amountGrown * cropGrowthRate.get(crop)!;
+            const growthRate = cropGrowthRate.get(crop) ?? baseCropGrowthRate;
+            this.stockpile += amountGrown * growthRate;
             this.stockpile -= this.totalFarmers * consumptionRate;
             this.stockpile = Math.ceil(this.stockpile);
         }
@@ -74,39 +71,78 @@ class Farm {
 // Loot is an interface b/c kingdom (currently) can become a Loot object
 interface Loot {
     gold: number;
+    idlePopulation: number;
     farms: Map<Crop, Farm>;
 }
 
-const baseDPSPerSoldier = 1;
+const lootMinimum = 0.75;
+const lootMaximum = 1.25;
 
 class Army {
     totalSoldiers = 0;
-    dpsPerSoldier = baseDPSPerSoldier;
 
-    attack(kingdom: Kingdom): Loot {
-        //TODO: How to attack a kingdom
-        console.assert(false, "Attacking a Kingdom is not implemented");
-        return kingdom;
+    attack(opponent: Kingdom): Loot | null {
+        if(this.totalSoldiers * randFloat(lootMinimum, lootMaximum) < opponent.strength) return null;
+
+        const lootFarms = new Map();
+
+        opponent.farms.forEach((farm, crop) => {
+            lootFarms.set(crop, new Farm(
+                farm.stockpile * lootMinimum,
+                farm.totalFarmers * lootMinimum
+            ));
+        });
+
+        return {
+            gold: opponent.gold - this.totalSoldiers,
+            idlePopulation: opponent.idlePopulation * lootMinimum,
+            farms: lootFarms,
+        };
     }
 }
 
 // Returns a random integer inclusive on both ends
-function getRandInt(min:number, max:number):number {
-    return Math.floor(Math.random() * (max - min + 1) ) + min;
+function randInt(min:number, max:number):number {
+    console.assert(Number.isInteger(min) && Number.isInteger(max), "randInt should not use non-integer inputs");
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-const startingHealth = 100;
+// Returns a random float inclusive only on min
+function randFloat(min:number, max:number):number {
+    return Math.random() * (max - min) + min;
+}
 
 class Kingdom {
-    name: string;
-    // TODO: Better define health
-    health = startingHealth;
     gold = 0;
-    idlePopulation: number;
     army = new Army();
     farms: Map<Crop, Farm> = new Map();
 
     constructor(public name: string, public idlePopulation: number){}
+
+    attack(opponent: Kingdom) {
+        const waitTime = (opponent.strength + this.army.totalSoldiers) / 100;
+
+        window.setTimeout(() => {
+            const result = this.army.attack(opponent);
+            // TODO: Better inform the player of the result
+            if(result == null)
+                alert(`The attack against ${opponent.name} failed.`);
+            else{
+                alert(`The attack against ${opponent.name} succeded.`);
+                this.gold += result.gold;
+                this.idlePopulation += result.idlePopulation;
+                this.farms.forEach((farm, crop) => {
+                    // Typescript should know that `result` is not null here,
+                    // as we are in the `else` of an `== null` check.
+                    const lootedFarm = result?.farms.get(crop);
+                    if(lootedFarm != null){
+                        farm.totalFarmers += lootedFarm?.totalFarmers;
+                        farm.stockpile += lootedFarm?.stockpile;
+                    }
+                });
+            }
+        }, waitTime);
+    }
 
     orderHarvest() {
         console.log(this.farms?.size);
@@ -137,20 +173,24 @@ class Kingdom {
 
         // TODO: Decrease price after sale
     }
+
+    get strength() {
+        return this.idlePopulation * 0.25 + this.army.totalSoldiers;
+    }
 }
 
 const minStartingRye = 50;
 const maxStartingRye = 100;
-const minStart = 4;
-const maxStart = 10;
+const minStartingPop = 4;
+const maxStartingPop = 10;
 const kingdoms = [
-    new Kingdom(promptPlayer("Enter the name of your kingdom"), getRandInt(minStart, maxStart)), // player
+    new Kingdom(promptPlayer("Enter the name of your kingdom"), randInt(minStartingPop, maxStartingPop)), // player
     //TODO: Add other kingdoms
 ];
 
 // Init player data
 const player = kingdoms[0];
-player.farms.set(Crop.Rye, new Farm(getRandInt(minStartingRye, maxStartingRye)));
+player.farms.set(Crop.Rye, new Farm(randInt(minStartingRye, maxStartingRye)));
 
 // indicies for select fields
 let selectedFarm = "Rye";
