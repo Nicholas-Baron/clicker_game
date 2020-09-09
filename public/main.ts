@@ -316,7 +316,7 @@ function updateStats() {
 
 }
 function handleHarvest() {
-    player.farms.forEach(value => value.playerHarvest(key));
+    player.farms.forEach((value, key) => value.playerHarvest(key));
 }
 function handleAssignFarmer() {
     if(player.idlePopulation > 0){
