@@ -417,6 +417,7 @@ function updateStats() {
 function handleHarvest() {
     player.farms.forEach((value, key) => value.playerHarvest(key));
 }
+
 function handleAssignPerson(type: PersonType, crop?: Crop) {
     if(type == PersonType.Farmer) {
         if(player.farms.get(crop!) != null && player.idlePopulation > 0){
