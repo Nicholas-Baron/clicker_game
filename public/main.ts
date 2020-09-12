@@ -12,7 +12,6 @@ enum Store {
     BarleyFarm,
     Person
 }
-// This solution is fine
 const enum DefaultCropPrices {
     Rye = 1,
     Barley,
