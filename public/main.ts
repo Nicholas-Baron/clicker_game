@@ -247,14 +247,14 @@ function handleSellAmount(el: HTMLElement) {
 
 }
 async function onAttack() {
-    if(player.name !== kingdoms[kingdoms.length - 1].name){
+    if(player.name !== kingdoms[kingdoms.length - 1].name)
         player.attack(kingdoms[kingdoms.length - 1]);
-    }
+    
 }
 function handleSell(crop: Crop) {
     if(player.farms.get(crop)!.stockpile >= parseInt(sellAmount)) {
         player.farms.get(crop)!.stockpile -= parseInt(sellAmount);
-        player.gold += parseInt(sellAmount)*cropMarket.get(crop)!;
+        player.gold += parseInt(sellAmount) * cropMarket.get(crop)!;
     }
 }
 function handleBuy(storeItem: Store, id: string) {
@@ -424,12 +424,12 @@ function handleAssignPerson(type: PersonType, crop?: Crop) {
             player.farms.get(crop!)!.totalFarmers++;
         }
     }
-    else if(type == PersonType.Soldier){
+    else if(type == PersonType.Soldier)
         if(player.idlePopulation > 0) {
             player.army.totalSoldiers++;
             player.idlePopulation--;
         }
-    }
+    
 
 }
 function handleRemovePerson(type: PersonType, crop?: Crop) {
@@ -441,12 +441,12 @@ function handleRemovePerson(type: PersonType, crop?: Crop) {
             player.idlePopulation++;
         }
     }
-    else if(type == PersonType.Soldier){
+    else if(type == PersonType.Soldier)
         if(player.army.totalSoldiers > 0) {
             player.army.totalSoldiers--;
             player.idlePopulation++;
         }
-    }
+    
 }
 window.onload = () => {
     window.setInterval(() => {
