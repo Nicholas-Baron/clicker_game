@@ -7,7 +7,7 @@
   <body>
 
     <div class="container">
-      <div class="row">
+      <div class="row mt-6">
         <div class="column">
           <div id="actions-tab">
             <div id="gold-grain-stats">
@@ -20,30 +20,29 @@
               <button class="btn" onclick="handleAssignSoldier()">Assign Person</button>
               <button class="btn" onclick="handleRemoveSoldier()">Remove Person</button>
             </div>
-            <div id="farm-menu">
-              <label for="farms">Select Farm:</label>
-              <select id="farms" name="farms" onclick="handleFarmChoice(this)" class="select-field">
-              </select>
-            </div>
             <div id="farmer">
-              <p class="info-label"><span id="farmers"></span> Farmer</p>
-              <button class="btn" onclick="handleAssignFarmer()">Assign Person</button>
-              <button class="btn" onclick="handleRemoveFarmer()">Remove Person</button>
             </div>
           </div>
         </div>
-        <div class="column">
+        <div class="column ">
           <div id="store-tab">
             <p>Store</p>
           </div>
           <div class="sell-tab">
             <p class="info-label mt-3">Sell Crops</p>
-            <select id="crops-sale" name="crops-sale" class="select-field">
-            </select>
-            <input type="text" id="amount">
-            <button onclick="sellCrop()" class="btn">Sell</button>
+            <div id="choices">
+              <a href="#" onclick="handleSellAmount(this)">1</a>
+              <a href="#" onclick="handleSellAmount(this)">10</a>
+              <a href="#" onclick="handleSellAmount(this)">100</a>
+            </div>
+            <div id="sell-options">
+            </div>
           </div>
         </div>
+      </div>
+      <div class="center" id="war">
+        <h1 id="enemy-kingdom-name"></h1>
+        <button class="btn attack" onclick="onAttack()">Attack Kingdom</button>
       </div>
     </div>
   </body>
