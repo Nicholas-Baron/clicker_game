@@ -12,7 +12,6 @@ enum Store {
     BarleyFarm,
     Person
 }
-// This solution is fine
 const enum DefaultCropPrices {
     Rye = 1,
     Barley,
@@ -417,6 +416,7 @@ function updateStats() {
 function handleHarvest() {
     player.farms.forEach((value, key) => value.playerHarvest(key));
 }
+
 function handleAssignPerson(type: PersonType, crop?: Crop) {
     if(type == PersonType.Farmer) {
         if(player.farms.get(crop!) != null && player.idlePopulation > 0){
