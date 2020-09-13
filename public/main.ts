@@ -230,6 +230,7 @@ const minStartingPop = 4;
 const maxStartingPop = 10;
 const baseEnemyPop = 10;
 const baseLootGold = 100;
+
 const kingdoms = [
     new Kingdom(promptPlayer("Enter the name of your kingdom"), randInt(minStartingPop, maxStartingPop))
 ];
@@ -326,6 +327,7 @@ function handleBuy(storeItem: Store, id: string) {
         default:
             break;
         }
+
         player.gold -= storePrices.get(storeItem)!;
     }
 
@@ -337,11 +339,13 @@ function personAssignment() {
         const parent = document.createElement("div");
         parent.id = "assignment-container-" + Crop[value];
         parent.className = "assignment-container";
+
         document.getElementById("farmer")?.appendChild(parent);
 
         const farmers = document.createElement("span");
         farmers.id = "farmers-" + Crop[value];
         farmers.className = "total-farmers";
+
         setElementInnerHTML(farmers, player.farms.get(value)?.totalFarmers ?? 0);
         parent.appendChild(farmers);
 
@@ -380,6 +384,7 @@ function personAssignment() {
     soldierText.className = "type";
     setElementInnerHTML(soldierText, " Soldiers");
     parent.appendChild(soldierText);
+
 
     const assignButton = document.createElement("button");
     assignButton.className = "btn a-btn";
@@ -432,7 +437,6 @@ function loadGUI() {
     setIdInnerHTML("soldiers", player.army.totalSoldiers.toString());
     setIdInnerHTML("enemy-kingdom-name", kingdomNames[kingdomNames.length - 1]);
     console.log(kingdomNames[kingdomNames.length - 1]);
-
     personAssignment();
 }
 
@@ -478,8 +482,6 @@ function handleAssignPerson(type: PersonType, crop?: Crop) {
             player.army.totalSoldiers++;
             player.idlePopulation--;
         }
-
-
 }
 function handleRemovePerson(type: PersonType, crop?: Crop) {
     console.log(player.army.totalSoldiers);
@@ -495,7 +497,6 @@ function handleRemovePerson(type: PersonType, crop?: Crop) {
             player.army.totalSoldiers--;
             player.idlePopulation++;
         }
-
 }
 window.onload = () => {
     window.setInterval(() => {
