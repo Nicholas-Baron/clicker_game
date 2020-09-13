@@ -153,3 +153,12 @@ button {
 .total-farmers {
     width: 2em;
 }
+.row-margins {
+    margin: 3em 0;
+}
+#sell-options button {
+    margin-top: 1em;
+}
+.title-container {
+    padding-top: 2em;
+}
