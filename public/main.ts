@@ -235,20 +235,16 @@ function percise(num: number, sig: number) {
     return Number(num.toFixed(sig));
 }
 function handleSellAmount(el: HTMLElement) {
-    sellAmount = el.innerHTML;
-    const parent = document.getElementById("choices");
-
-    for(const child of parent?.children ?? [])
-        if(child.innerHTML === sellAmount)
-            child.className = "active";
-        else
-            child.className = "";
-
+    for(const child of document.getElementsByClassName("radio-group")) {
+        if(child != null)
+            if((child.children[0] as HTMLInputElement).checked)
+                sellAmount = child.children[1].innerHTML;
+    }
 }
 async function onAttack() {
     if(player.name !== kingdoms[kingdoms.length - 1].name)
         player.attack(kingdoms[kingdoms.length - 1]);
-    
+
 }
 function handleSell(crop: Crop) {
     if(player.farms.get(crop)!.stockpile >= parseInt(sellAmount)) {
@@ -311,16 +307,19 @@ function personAssignment() {
     crops.map((value: Crop) => {
         const parent = document.createElement("div");
         parent.id = "assignment-container-" + Crop[value];
+        parent.className = "assignment-container";
         document.getElementById("farmer")?.appendChild(parent);
 
         const farmers = document.createElement("span");
         farmers.id = "farmers-" + Crop[value];
+        farmers.className = "total-farmers";
         setElementInnerHTML(farmers, player.farms.get(value)?.totalFarmers ?? 0);
         parent.appendChild(farmers);
 
         const farmerType = document.createElement("span");
         farmerType.id = "farmer-type-" + Crop[value];
-        setElementInnerHTML(farmerType, " " + Crop[value] + " Farmers ");
+        farmerType.className = "type";
+        setElementInnerHTML(farmerType, "  " + Crop[value] + " Farmers ");
         parent.appendChild(farmerType);
 
         const assignButton = document.createElement("button");
@@ -429,7 +428,7 @@ function handleAssignPerson(type: PersonType, crop?: Crop) {
             player.army.totalSoldiers++;
             player.idlePopulation--;
         }
-    
+
 
 }
 function handleRemovePerson(type: PersonType, crop?: Crop) {
@@ -446,7 +445,7 @@ function handleRemovePerson(type: PersonType, crop?: Crop) {
             player.army.totalSoldiers--;
             player.idlePopulation++;
         }
-    
+
 }
 window.onload = () => {
     window.setInterval(() => {

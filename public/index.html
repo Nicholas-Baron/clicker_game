@@ -31,9 +31,18 @@
           <div class="sell-tab">
             <p class="info-label mt-3">Sell Crops</p>
             <div id="choices">
-              <a href="#" onclick="handleSellAmount(this)">1</a>
-              <a href="#" onclick="handleSellAmount(this)">10</a>
-              <a href="#" onclick="handleSellAmount(this)">100</a>
+              <div class="radio-group">
+                <input type="radio" onclick="handleSellAmount(this)" name="choice"/>
+                <label> 1</label>
+              </div>
+              <div class="radio-group">
+                <input type="radio" onclick="handleSellAmount(this)" name="choice"/>
+                <label> 10</label>
+              </div>
+              <div class="radio-group">
+                <input type="radio" onclick="handleSellAmount(this)" name="choice"/>
+                <label> 100</label>
+              </div>
             </div>
             <div id="sell-options">
             </div>
