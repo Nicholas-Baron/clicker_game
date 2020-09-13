@@ -55,7 +55,7 @@ enum PersonType {
 
 // );
 // Food eaten by one person
-const consumptionRate = 0.05;
+const consumptionRate = 0.1;
 
 // A farm
 class Farm {
@@ -67,10 +67,10 @@ class Farm {
 
     harvest(crop: Crop){
         const amountGrown = Math.min(this.totalFarmers, this.stockpile);
+        //this.stockpile -= this.totalFarmers * consumptionRate;
         if(this.stockpile - this.totalFarmers * consumptionRate > 0) {
             const growthRate = cropGrowthRate.get(crop) ?? baseCropGrowthRate;
             this.stockpile += amountGrown * growthRate;
-            this.stockpile -= this.totalFarmers * consumptionRate;
             this.stockpile = Math.ceil(this.stockpile);
         }
     }
@@ -123,21 +123,33 @@ function randInt(min:number, max:number):number {
 function randFloat(min:number, max:number):number {
     return Math.random() * (max - min) + min;
 }
-
+const minLoss = 0.3;
+const maxLoss = 0.75;
 class Kingdom {
     gold = 0;
     army = new Army();
     farms: Map<Crop, Farm> = new Map();
-
     constructor(public name: string, public idlePopulation: number){}
 
     attack(opponent: Kingdom) {
-        const waitTime = (opponent.strength + this.army.totalSoldiers) / 100;
+        const waitTime = (opponent.strength + this.army.totalSoldiers) / 300;
         window.setTimeout(() => {
             const result = this.army.attack(opponent);
             // TODO: Better inform the player of the result
-            if(result == null)
+            if(result == null){
                 alert(`The attack against ${opponent.name} failed.`);
+                player.army.totalSoldiers = Math.ceil(player.army.totalSoldiers * randFloat(minLoss, maxLoss));
+                player.idlePopulation = Math.ceil(player.idlePopulation * randFloat(minLoss, maxLoss));
+                player.gold = Math.ceil(player.gold * randFloat(minLoss, maxLoss));
+                player.farms.forEach((farm, crop) => {
+                    const playerFarm = player?.farms.get(crop);
+                    if(playerFarm != null){
+                        farm.totalFarmers = Math.ceil(playerFarm?.totalFarmers * randFloat(minLoss, maxLoss));
+                        farm.stockpile = Math.ceil(playerFarm?.stockpile * randFloat(minLoss, maxLoss));
+                    }
+                });
+
+            }
             else{
                 alert(`The attack against ${opponent.name} succeded.`);
                 this.gold += result.gold;
@@ -152,6 +164,10 @@ class Kingdom {
                     }
                 });
                 kingdoms.pop();
+                let totalFarmers = 0;
+                this.farms.forEach((value: Farm) => totalFarmers += value.totalFarmers);
+                kingdoms[kingdoms.length - 1].army.totalSoldiers =
+                    (player.idlePopulation + player.army.totalSoldiers + totalFarmers) * 2;
                 setIdInnerHTML("enemy-kingdom-name", kingdoms[kingdoms.length - 1].name);
 
             }
@@ -160,9 +176,23 @@ class Kingdom {
     }
 
     orderHarvest() {
+        let totalFarmers = 0;
+
         this.farms.forEach(
-            (farm, crop) => farm.harvest(crop)
+            (farm, crop) => {
+                farm.harvest(crop);
+                totalFarmers += farm.totalFarmers;
+            }
         );
+
+        if(this.farms.has(Crop.Barley)
+        && this.farms.get(Crop.Barley)!.stockpile > 0)
+        this.farms.get(Crop.Barley)!.stockpile -= this.army.totalSoldiers * consumptionRate;
+        else
+            console.assert(this.army.totalSoldiers <= 0);
+
+        if(this.farms.get(Crop.Barley)!.stockpile > 0)
+        this.farms.get(Crop.Rye)!.stockpile -= totalFarmers * consumptionRate;
     }
 
     buyCrop(crop: Crop, amt: number) {
@@ -200,13 +230,13 @@ const minStartingPop = 4;
 const maxStartingPop = 10;
 const baseEnemyPop = 10;
 const baseLootGold = 100;
-const currentKingdom = 1;
+
 const kingdoms = [
     new Kingdom(promptPlayer("Enter the name of your kingdom"), randInt(minStartingPop, maxStartingPop))
 ];
-kingdomNames.forEach((name: string, difficulty: number) => {
-    const kingdom = new Kingdom(name, baseEnemyPop * difficulty);
-    kingdom.gold = baseLootGold * difficulty;
+kingdomNames.forEach((name: string) => {
+    const kingdom = new Kingdom(name, baseEnemyPop);
+    kingdom.gold = baseLootGold;
     kingdoms.push(kingdom);
 });
 
@@ -220,6 +250,8 @@ function promptPlayer(message: string): string {
     let result = null;
     while(result == null)
         result = window.prompt(message, "");
+    console.log(result);
+    setIdInnerHTML("kingdom-title", result);
     return result;
 }
 
@@ -231,24 +263,18 @@ function setElementInnerHTML(el: tag, content: Printable) {
 function setIdInnerHTML(id: string, content: Printable) {
     setElementInnerHTML(document.getElementById(id)!, content);
 }
-function percise(num: number, sig: number) {
-    return Number(num.toFixed(sig));
-}
 function handleSellAmount(el: HTMLElement) {
-    sellAmount = el.innerHTML;
-    const parent = document.getElementById("choices");
-
-    for(const child of parent?.children ?? [])
-        if(child.innerHTML === sellAmount)
-            child.className = "active";
-        else
-            child.className = "";
-
+    for(const child of document.getElementsByClassName("radio-group"))
+        if(child != null){
+            const childNode = child.children[0] as HTMLInputElement;
+            if(childNode.checked)
+                sellAmount = child.children[1].innerHTML;
+        }
 }
 async function onAttack() {
     if(player.name !== kingdoms[kingdoms.length - 1].name)
         player.attack(kingdoms[kingdoms.length - 1]);
-    
+
 }
 function handleSell(crop: Crop) {
     if(player.farms.get(crop)!.stockpile >= parseInt(sellAmount)) {
@@ -268,7 +294,7 @@ function handleBuy(storeItem: Store, id: string) {
 
         const sellTab = document.getElementById("sell-options");
         const newCrop = document.createElement("button");
-        newCrop.className = "btn a-btn";
+        newCrop.className = "btn";
         newCrop.id = Crop[crop] + "-sell-option";
         setElementInnerHTML(newCrop, Crop[crop]);
         newCrop.onclick = () => handleSell(crop);
@@ -278,7 +304,7 @@ function handleBuy(storeItem: Store, id: string) {
 
         if(player.farms.size == 3) {
             alert("An enemy kingdom is attacking " + player.name);
-            setIdInnerHTML("enemy-kingdom-name", kingdoms[currentKingdom].name);
+            setIdInnerHTML("enemy-kingdom-name", kingdoms[kingdoms.length - 1].name);
             document.getElementById("war")!.style.display = "flex";
             document.getElementById("assignment-container-soldier")!.style.display = "flex";
         }
@@ -301,6 +327,7 @@ function handleBuy(storeItem: Store, id: string) {
         default:
             break;
         }
+
         player.gold -= storePrices.get(storeItem)!;
     }
 
@@ -311,16 +338,21 @@ function personAssignment() {
     crops.map((value: Crop) => {
         const parent = document.createElement("div");
         parent.id = "assignment-container-" + Crop[value];
+        parent.className = "assignment-container";
+
         document.getElementById("farmer")?.appendChild(parent);
 
         const farmers = document.createElement("span");
         farmers.id = "farmers-" + Crop[value];
+        farmers.className = "total-farmers";
+
         setElementInnerHTML(farmers, player.farms.get(value)?.totalFarmers ?? 0);
         parent.appendChild(farmers);
 
         const farmerType = document.createElement("span");
         farmerType.id = "farmer-type-" + Crop[value];
-        setElementInnerHTML(farmerType, " " + Crop[value] + " Farmers ");
+        farmerType.className = "type";
+        setElementInnerHTML(farmerType, "  " + Crop[value] + " Farmers ");
         parent.appendChild(farmerType);
 
         const assignButton = document.createElement("button");
@@ -338,12 +370,21 @@ function personAssignment() {
     const parent = document.createElement("div");
     parent.id = "assignment-container-soldier";
     parent.style.display = "none";
+    parent.className = "assignment-container";
     document.getElementById("farmer")?.appendChild(parent);
 
     const soldiers = document.createElement("span");
     soldiers.id = "assignment-soldier";
-    setElementInnerHTML(soldiers, (player.army.totalSoldiers ?? 0) + " Soldiers");
+    soldiers.className = "total-farmers";
+    setElementInnerHTML(soldiers, player.army.totalSoldiers ?? 0);
     parent.appendChild(soldiers);
+
+    const soldierText = document.createElement("span");
+    soldierText.id = "soldier-text";
+    soldierText.className = "type";
+    setElementInnerHTML(soldierText, " Soldiers");
+    parent.appendChild(soldierText);
+
 
     const assignButton = document.createElement("button");
     assignButton.className = "btn a-btn";
@@ -386,7 +427,7 @@ function loadGUI() {
         const sellOptions = document.getElementById("sell-options");
         const sellOption = document.createElement("button");
         sellOption.innerHTML = Crop[key];
-        sellOption.className = "btn my-3";
+        sellOption.className = "btn";
         sellOption.onclick = () => handleSell(key);
         sellOption.id = Crop[key] + "-sell-option";
         sellOptions!.appendChild(sellOption);
@@ -395,6 +436,7 @@ function loadGUI() {
     setIdInnerHTML("people", player.idlePopulation.toString());
     setIdInnerHTML("soldiers", player.army.totalSoldiers.toString());
     setIdInnerHTML("enemy-kingdom-name", kingdomNames[kingdomNames.length - 1]);
+    console.log(kingdomNames[kingdomNames.length - 1]);
     personAssignment();
 }
 
@@ -408,13 +450,24 @@ function updateStats() {
     crops.map((value:Crop) => {
         setIdInnerHTML("farmers-" + Crop[value], player.farms.get(value)?.totalFarmers ?? 0);
     });
-    setIdInnerHTML("assignment-soldier", (player.army.totalSoldiers ?? 0) + " Soldiers");
-    // setIdInnerHTML("enemy-kingdom-name", kingdomNames[kingdomNames.length - 1]);
+    setIdInnerHTML("assignment-soldier", player.army.totalSoldiers ?? 0);
     if(player.farms.size > 0) player.orderHarvest();
 
 }
 function handleHarvest() {
-    player.farms.forEach((value, key) => value.playerHarvest(key));
+    let totalFarmers = 0;
+    player.farms.forEach((value, key) => {
+        value.playerHarvest(key);
+        totalFarmers += value.totalFarmers;
+    });
+    if(player.farms.has(Crop.Barley)
+    && player.farms.get(Crop.Barley)!.stockpile > 0)
+        player.farms.get(Crop.Barley)!.stockpile -= player.army.totalSoldiers * consumptionRate;
+    else
+        console.assert(player.army.totalSoldiers <= 0);
+
+    if(player.farms.get(Crop.Barley)!.stockpile > 0)
+        player.farms.get(Crop.Rye)!.stockpile -= totalFarmers * consumptionRate;
 }
 
 function handleAssignPerson(type: PersonType, crop?: Crop) {
@@ -429,8 +482,6 @@ function handleAssignPerson(type: PersonType, crop?: Crop) {
             player.army.totalSoldiers++;
             player.idlePopulation--;
         }
-    
-
 }
 function handleRemovePerson(type: PersonType, crop?: Crop) {
     console.log(player.army.totalSoldiers);
@@ -446,7 +497,6 @@ function handleRemovePerson(type: PersonType, crop?: Crop) {
             player.army.totalSoldiers--;
             player.idlePopulation++;
         }
-    
 }
 window.onload = () => {
     window.setInterval(() => {
