@@ -67,10 +67,10 @@ class Farm {
 
     harvest(crop: Crop){
         const amountGrown = Math.min(this.totalFarmers, this.stockpile);
+        //this.stockpile -= this.totalFarmers * consumptionRate;
         if(this.stockpile - this.totalFarmers * consumptionRate > 0) {
             const growthRate = cropGrowthRate.get(crop) ?? baseCropGrowthRate;
             this.stockpile += amountGrown * growthRate;
-            this.stockpile -= this.totalFarmers * consumptionRate;
             this.stockpile = Math.ceil(this.stockpile);
         }
     }
@@ -165,7 +165,7 @@ class Kingdom {
                 });
                 kingdoms.pop();
                 let totalFarmers = 0;
-                this.farms.forEach((value: Farm) => totalFarmers += value.totalFarmers)
+                this.farms.forEach((value: Farm) => totalFarmers += value.totalFarmers);
                 kingdoms[kingdoms.length - 1].army.totalSoldiers =
                     (player.idlePopulation + player.army.totalSoldiers + totalFarmers) * 2;
                 setIdInnerHTML("enemy-kingdom-name", kingdoms[kingdoms.length - 1].name);
@@ -176,9 +176,23 @@ class Kingdom {
     }
 
     orderHarvest() {
+        let totalFarmers = 0;
+
         this.farms.forEach(
-            (farm, crop) => farm.harvest(crop)
+            (farm, crop) => {
+                farm.harvest(crop);
+                totalFarmers += farm.totalFarmers;
+            }
         );
+
+        if(this.farms.has(Crop.Barley)
+        && this.farms.get(Crop.Barley)!.stockpile > 0)
+        this.farms.get(Crop.Barley)!.stockpile -= this.army.totalSoldiers * consumptionRate;
+        else
+            console.assert(this.army.totalSoldiers <= 0);
+
+        if(this.farms.get(Crop.Barley)!.stockpile > 0)
+        this.farms.get(Crop.Rye)!.stockpile -= totalFarmers * consumptionRate;
     }
 
     buyCrop(crop: Crop, amt: number) {
@@ -216,7 +230,6 @@ const minStartingPop = 4;
 const maxStartingPop = 10;
 const baseEnemyPop = 10;
 const baseLootGold = 100;
-const currentKingdom = 1;
 const kingdoms = [
     new Kingdom(promptPlayer("Enter the name of your kingdom"), randInt(minStartingPop, maxStartingPop))
 ];
@@ -249,15 +262,13 @@ function setElementInnerHTML(el: tag, content: Printable) {
 function setIdInnerHTML(id: string, content: Printable) {
     setElementInnerHTML(document.getElementById(id)!, content);
 }
-function percise(num: number, sig: number) {
-    return Number(num.toFixed(sig));
-}
 function handleSellAmount(el: HTMLElement) {
-    for(const child of document.getElementsByClassName("radio-group")) {
-        if(child != null)
-            if((child.children[0] as HTMLInputElement).checked)
+    for(const child of document.getElementsByClassName("radio-group"))
+        if(child != null){
+            const childNode = child.children[0] as HTMLInputElement;
+            if(childNode.checked)
                 sellAmount = child.children[1].innerHTML;
-    }
+        }
 }
 async function onAttack() {
     if(player.name !== kingdoms[kingdoms.length - 1].name)
@@ -435,13 +446,24 @@ function updateStats() {
     crops.map((value:Crop) => {
         setIdInnerHTML("farmers-" + Crop[value], player.farms.get(value)?.totalFarmers ?? 0);
     });
-    setIdInnerHTML("assignment-soldier", (player.army.totalSoldiers ?? 0));
-    // setIdInnerHTML("enemy-kingdom-name", kingdomNames[kingdomNames.length - 1]);
+    setIdInnerHTML("assignment-soldier", player.army.totalSoldiers ?? 0);
     if(player.farms.size > 0) player.orderHarvest();
 
 }
 function handleHarvest() {
-    player.farms.forEach((value, key) => value.playerHarvest(key));
+    let totalFarmers = 0;
+    player.farms.forEach((value, key) => {
+        value.playerHarvest(key);
+        totalFarmers += value.totalFarmers;
+    });
+    if(player.farms.has(Crop.Barley)
+    && player.farms.get(Crop.Barley)!.stockpile > 0)
+        player.farms.get(Crop.Barley)!.stockpile -= player.army.totalSoldiers * consumptionRate;
+    else
+        console.assert(player.army.totalSoldiers <= 0);
+
+    if(player.farms.get(Crop.Barley)!.stockpile > 0)
+        player.farms.get(Crop.Rye)!.stockpile -= totalFarmers * consumptionRate;
 }
 
 function handleAssignPerson(type: PersonType, crop?: Crop) {
